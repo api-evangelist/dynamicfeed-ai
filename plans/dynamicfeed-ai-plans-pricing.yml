@@ -1,0 +1,117 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/pricing (HTTP 200, read 2026-09-19); tier prices from https://dynamicfeed.ai/llms.txt
+  ("Pricing (direct REST API)", Last updated 6 July 2026); x402 prices probed from https://dynamicfeed.ai/v1/pro/catalog
+  and a live 402 on POST /v1/pro/tool/current_time
+docs: https://dynamicfeed.ai/pricing
+plan_count: 4
+currency: USD
+model: Free keyless tier; per-key daily-quota subscription tiers (self-serve via Stripe per the Terms) that the
+  current pricing page says are NOT purchasable; machine-paid x402 per-call rail
+consistency_gap: 'Two published price sheets disagree. /pricing (the human page) lists Explore (Free), Builder (Early
+  access), Scale (Early access) and Enterprise (Custom) and states "Paid tiers are not purchasable yet … no CTA
+  on this page can create a charge." llms.txt (dated 6 July 2026) lists Free $0 / 1,000 req/day, Pro $10/mo / 25,000/day,
+  Team $25/mo / 250,000/day, Enterprise $300/mo / 10,000,000/day, and /v1/asof says "Requires a PAID API key (Pro
+  and up)". The free daily quota is stated three ways: 1,000 calls/day (/info free_tier and llms.txt pricing), 100
+  requests/day (llms.txt REST section and the /dashboard page). Both sheets are recorded; the /pricing page is treated
+  as current because it is the page a buyer lands on.'
+plans:
+- id: explore
+  name: Explore
+  price: 0
+  currency: USD
+  period: null
+  source: https://dynamicfeed.ai/pricing
+  included:
+  - Keyless MCP endpoint
+  - Keyless REST batch endpoint (max 20 calls/request)
+  - Every response signed, with source and freshness
+  - Public Project Atlas
+  - Fair-use rate limits
+  - Free X-API-Key via POST /signup for per-user routes (daily quota stated as 100 or 1,000 requests/day — see consistency_gap)
+  purchasable: true
+- id: builder
+  name: Builder
+  price: null
+  currency: USD
+  period: null
+  status: early access by request
+  source: https://dynamicfeed.ai/pricing
+  included:
+  - Everything in Explore
+  - Shaped with early partners around real workloads
+  purchasable: false
+- id: scale
+  name: Scale
+  price: null
+  currency: USD
+  period: null
+  status: early access by request
+  source: https://dynamicfeed.ai/pricing
+  included:
+  - Everything in Builder
+  - Designed for sustained production volume
+  - Archive and history needs scoped together
+  purchasable: false
+- id: enterprise
+  name: Enterprise
+  price: null
+  currency: USD
+  period: null
+  status: custom, executed agreement
+  source: https://dynamicfeed.ai/pricing
+  included:
+  - Tailored infrastructure, retention, integrations, support and service levels
+  purchasable: false
+legacy_tiers_llms_txt:
+- name: Free
+  price: 0
+  period: month
+  quota: 1,000 requests/day
+- name: Pro
+  price: 10
+  period: month
+  quota: 25,000 requests/day
+  unlocks: GET /v1/asof time-machine replay
+- name: Team
+  price: 25
+  period: month
+  quota: 250,000 requests/day
+- name: Enterprise
+  price: 300
+  period: month
+  quota: 10,000,000 requests/day
+legacy_tiers_note: 'From llms.txt "Last updated: 6 July 2026". Superseded on the human pricing page but still served
+  to agents in the very document that tells them how to connect.'
+machine_paid:
+  protocol: x402
+  network: base
+  asset: USDC (0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913)
+  pay_to: '0xb525F2c54Ae0c3B3466206694726f85C7Cf7b985'
+  price_per_call: 0.001 USDC (1000 atomic units)
+  skus:
+  - id: batch
+    endpoint: POST /v1/pro/batch
+    description: Up to 100 signed tool calls per request
+  - id: single_tool
+    endpoint: POST /v1/pro/tool/{tool}
+    description: One signed call to any tool
+  - id: asof_replay
+    endpoint: POST /v1/pro/asof
+    description: Signed as-of archive replay
+  receipt_option: '{"receipt": true} adds a signed delivery-receipt/v1 in the X-DF-RECEIPT header'
+  facilitators_listed:
+  - https://api.cdp.coinbase.com/platform/v2/x402
+  - https://facilitator.payai.network
+  - https://facilitator.mogami.tech
+  - https://dexter.cash/facilitator
+  verified: probed — live 402 quote observed 2026-09-19; no payment was made
+  docs: https://dynamicfeed.ai/x402
+billing:
+  processor: Stripe (Terms section 4; POST /billing/checkout in the OpenAPI)
+  refunds: non-refundable except where required by law (Terms)
+  cancellation: any time; access continues to end of paid period
+other_channels:
+- 'RapidAPI (llms.txt: "RapidAPI tiers are monthly"; x-rapidapi-proxy-secret / x-rapidapi-user headers appear on
+  keyed operations)'
+- Hugging Face open dataset (CC-BY-4.0)

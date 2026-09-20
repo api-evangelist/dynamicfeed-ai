@@ -1,0 +1,42 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://dynamicfeed.ai/trust (HTTP 200, read in full 2026-09-19) and https://dynamicfeed.ai/enterprise
+url: https://dynamicfeed.ai/trust
+name: Trust Center — "verify everything about us"
+certifications: []
+certifications_note: 'NONE HELD. probe-security-programs.py matched the keyword "SOC 2" on this page and recorded
+  it as a certification; the page actually says the opposite: "soc 2 · dpa — On request. SOC 2 and a signed DPA
+  are pursued against a signed enterprise requirement, not claimed speculatively. We hold no certification we haven''t
+  earned." That line is corrected here so the artifact does not credit a certification the provider explicitly disclaims.
+  No Compliance pointer is emitted.'
+posture_stated:
+- area: transport
+  claim: TLS everywhere; Content-Security-Policy enforced site-wide
+  verified: probed — TLSv1.3, HSTS max-age 63072000 preload, CSP header observed (security/dynamicfeed-ai-domain-security.yml)
+- area: data boundary
+  claim: No personal data required to read; no prompts or queries stored; nothing sold or shared; read-only by design
+- area: audit trail
+  claim: Ed25519 over canonical bytes; fingerprints time-stamped by an independent RFC 3161 authority; append-only
+    Merkle transparency log
+- area: provenance
+  claim: Source, licence and freshness attached to every value; full catalog at /sources
+- area: sso / rbac
+  claim: NOT live yet; available on an enterprise contract
+  status: roadmap
+- area: soc 2 / dpa
+  claim: On request, pursued against a signed enterprise requirement; not claimed
+  status: not held
+- area: uptime
+  claim: Live status and measured uptime at /uptime and /ops; a formal SLA is part of an enterprise agreement
+  status: no SLA
+contact: hello@dynamicfeed.ai (data-handling questions or a DPA)
+related:
+  security_advisories: https://dynamicfeed.ai/security/advisories
+  signing_key_registry: https://dynamicfeed.ai/.well-known/signing-key-registry.json
+  verification_standard: https://dynamicfeed.ai/standard
+  status: https://dynamicfeed.ai/uptime
+evidence:
+- source: https://dynamicfeed.ai/trust
+  status: 200
+  quote: We hold no certification we haven't earned.

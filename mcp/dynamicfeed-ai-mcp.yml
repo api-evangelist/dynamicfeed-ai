@@ -1,0 +1,820 @@
+generated: '2026-09-19'
+method: probed
+source: https://dynamicfeed.ai/mcp (live JSON-RPC initialize + tools/list, 2026-09-19) cross-checked against https://dynamicfeed.ai/.well-known/mcp.json
+  and https://dynamicfeed.ai/llms.txt
+docs: https://dynamicfeed.ai/connect
+server_card: well-known/dynamicfeed-ai-mcp.json
+tools_list_capture: mcp/dynamicfeed-ai-mcp-tools-list.json
+summary: 'Dynamic Feed runs ONE hosted, keyless MCP server at https://dynamicfeed.ai/mcp (Streamable HTTP, with
+  legacy HTTP+SSE auto-detected on the same URL and explicit at /sse) exposing 94 read-only live-data tools, and
+  ALSO ships a first-party stdio bridge (npm dynamicfeed-mcp / PyPI dynamicfeed-mcp) for clients that cannot reach
+  remote servers. Anonymous initialize and tools/list both succeeded: protocolVersion 2025-06-18, serverInfo {name:
+  Dynamic Feed, version: 0.8.0}, 94 tools each carrying a real inputSchema; prompts/list and resources/list return
+  empty arrays. Every tool result is returned in an Ed25519-signed provenance envelope (source, licence, measured_at,
+  age_seconds, freshness) verifiable against /.well-known/keys.'
+deployment:
+  mode: both
+  endpoint: https://dynamicfeed.ai/mcp
+  install: npx -y dynamicfeed-mcp
+  install_alt: uvx dynamicfeed-mcp
+  package: https://www.npmjs.com/package/dynamicfeed-mcp
+  package_alt: https://pypi.org/project/dynamicfeed-mcp/
+  source_repository: https://github.com/Fluxdyne/fluxdyne-mcp
+  auth: none
+  verified: probed
+  note: 'Remote endpoint verified by a successful anonymous POST tools/list (HTTP 200, text/event-stream, 94 tools).
+    The stdio install strings are verbatim from llms.txt ("Local runner: npx -y dynamicfeed-mcp or uvx dynamicfeed-mcp")
+    and from the x-dynamic-feed response header the API sends on every response; the npm package exists (1.0.1,
+    bin dynamicfeed-mcp, depends on @modelcontextprotocol/sdk) and PyPI dynamicfeed-mcp exists (1.0.0). Sending
+    a free X-API-Key on MCP calls is optional and only attributes usage; the default is fully keyless.'
+servers:
+- id: dynamicfeed
+  name: Dynamic Feed
+  endpoint: https://dynamicfeed.ai/mcp
+  legacy_sse_endpoint: https://dynamicfeed.ai/sse
+  transport: streamable-http (auto-detects legacy HTTP+SSE)
+  auth: none
+  status: live
+  probe:
+    method: POST initialize; POST tools/list; POST prompts/list; POST resources/list
+    http_status: 200
+    content_type: text/event-stream
+    protocol_version: '2025-06-18'
+    server_version: 0.8.0
+    tool_count: 94
+    prompt_count: 0
+    resource_count: 0
+    fetched: '2026-09-19'
+    capabilities:
+      tools:
+        listChanged: false
+      prompts:
+        listChanged: false
+      resources:
+        subscribe: false
+        listChanged: false
+  collections:
+  - name: ai-models
+    tool_count: 3
+    endpoint: https://dynamicfeed.ai/mcp?collection=ai-models
+  - name: evidence
+    tool_count: 11
+    endpoint: https://dynamicfeed.ai/mcp?collection=evidence
+  - name: infrastructure
+    tool_count: 11
+    endpoint: https://dynamicfeed.ai/mcp?collection=infrastructure
+  - name: security
+    tool_count: 10
+    endpoint: https://dynamicfeed.ai/mcp?collection=security
+  - name: space
+    tool_count: 8
+    endpoint: https://dynamicfeed.ai/mcp?collection=space
+  - name: weather
+    tool_count: 21
+    endpoint: https://dynamicfeed.ai/mcp?collection=weather
+  collections_note: The server card advertises ?collection= query filters on the same endpoint; only the unfiltered
+    endpoint was probed.
+  tools:
+  - name: search_ai_models
+    title: Search AI Models
+    read_only: true
+    input_schema_keys:
+    - query
+    - provider
+    - max_input_price
+    - min_context
+    - needs_vision
+    - limit
+    description: Search current AI models by price, context window, and capability.
+  - name: airport_delays
+    title: Airport Delays
+    read_only: true
+    input_schema_keys:
+    - airport
+    - limit
+    description: Live FAA airport delays, ground stops, closures & ground-delay programs (US NAS, keyless). `airport`
+  - name: drug_shortages
+    title: Drug Shortages
+    read_only: true
+    input_schema_keys:
+    - query
+    - limit
+    description: US drug shortages from the FDA (openFDA, keyless). `query` = drug/generic name (amoxicillin…) or
+      blank
+  - name: sanctions_screen
+    title: Sanctions Screen
+    read_only: true
+    input_schema_keys:
+    - name
+    - program
+    - limit
+    description: Screen a name against the US OFAC SDN + UK Sanctions List (FCDO, Open Government Licence) — keyless.
+  - name: company_lookup
+    title: Company Lookup
+    read_only: true
+    input_schema_keys:
+    - query
+    - lei
+    - country
+    - limit
+    description: Resolve a company name (or exact 20-char LEI) to its authoritative global Legal Entity Identifier
+      +
+  - name: ephemeris
+    title: Ephemeris
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    - date
+    - tz
+    description: Solar & lunar timing for a place + day — sunrise/sunset, the full twilight set (civil/nautical/
+  - name: emissions
+    title: Emissions
+    read_only: true
+    input_schema_keys:
+    - country
+    - year
+    description: National greenhouse-gas emissions for a country (ISO-3 code, e.g. USA/CHN/IND) + year, from Climate
+  - name: federal_register
+    title: Federal Register
+    read_only: true
+    input_schema_keys:
+    - query
+    - doc_type
+    - agency
+    - days
+    - limit
+    description: Recent US Federal Register documents — rules, proposed rules, notices, executive orders (keyless).
+  - name: drought
+    title: Drought
+    read_only: true
+    input_schema_keys:
+    - area
+    - weeks
+    description: US drought severity — % of area in each D0-D4 class by week (U.S. Drought Monitor, keyless).
+  - name: water_levels
+    title: Water Levels
+    read_only: true
+    input_schema_keys:
+    - state
+    - site
+    - limit
+    description: Real-time US river levels — gage height (ft) + streamflow/discharge (ft3/s) from USGS NWIS (keyless).
+  - name: sports_pulse
+    title: Sports Pulse
+    read_only: true
+    input_schema_keys:
+    - topic
+    - days
+    - lang
+    description: Global ATTENTION + official schedule for a sporting event, team or competition — e.g. the 2026
+      FIFA
+  - name: world_cup
+    title: World Cup
+    read_only: true
+    input_schema_keys:
+    - upcoming
+    - recent
+    description: 2026 FIFA World Cup FIXTURES + final RESULTS — all 104 matches, the next `upcoming` fixtures and
+      the
+  - name: product_recalls
+    title: Product Recalls
+    read_only: true
+    input_schema_keys:
+    - query
+    - category
+    - limit
+    description: US product recalls — food, drug & medical-device enforcement reports (openFDA, keyless, CC0).
+  - name: treasury_yields
+    title: Treasury Yields
+    read_only: true
+    input_schema_keys: []
+    description: US Treasury daily par yield curve (1M-30Y) + the 10Y-2Y / 10Y-3M spreads — the classic recession
+  - name: weather_alerts
+    title: Weather Alerts
+    read_only: true
+    input_schema_keys:
+    - area
+    - event
+    - limit
+    description: Active US NWS weather alerts/warnings — tornado, flood, severe thunderstorm, heat, winter,
+  - name: carbon_intensity
+    title: Carbon Intensity
+    read_only: true
+    input_schema_keys: []
+    description: Great Britain grid carbon intensity right now (gCO2/kWh + index) + the live fuel mix + the
+  - name: sec_filings
+    title: Sec Filings
+    read_only: true
+    input_schema_keys:
+    - ticker
+    - form
+    - limit
+    description: Recent SEC EDGAR filings for a US public company by `ticker` (AAPL, NVDA, TSLA...). `form`
+  - name: ai_models
+    title: AI Models
+    read_only: true
+    input_schema_keys:
+    - query
+    - org
+    - task
+    - sort
+    - limit
+    description: Current & trending AI MODELS from the open-model ecosystem (Hugging Face) — name, org, task,
+  - name: service_status
+    title: Service Status
+    read_only: true
+    input_schema_keys:
+    - category
+    - only_issues
+    - limit
+    description: Live up/down/degraded status for major AI & dev services (OpenAI, Anthropic,
+  - name: ai_provider_latency
+    title: AI Provider Latency
+    read_only: true
+    input_schema_keys:
+    - window_hours
+    description: Measured latency & uptime for each major AI provider's API (OpenAI, Anthropic,
+  - name: software_version
+    title: Software Version
+    read_only: true
+    input_schema_keys:
+    - product
+    - query
+    - category
+    - only_supported
+    - only_lts
+    - limit
+    description: Latest stable versions & end-of-life (EOL) dates for software — languages, runtimes,
+  - name: security_advisories
+    title: Security Advisories
+    read_only: true
+    input_schema_keys:
+    - query
+    - package
+    - ecosystem
+    - severity
+    - min_cvss
+    - limit
+    description: Recent software security advisories / CVEs — each with the affected package, vulnerable
+  - name: market_hours
+    title: Market Hours
+    read_only: true
+    input_schema_keys:
+    - market
+    description: Returns current open/closed status and next open/close times for major exchanges, crypto (24/7),
+      and forex (24/5). Appropriate when a user asks whether a trading venue or market session is open.
+  - name: interest_rates
+    title: Interest Rates
+    read_only: true
+    input_schema_keys: []
+    description: Live US benchmark interest rates — Effective Fed Funds Rate, SOFR, OBFR, etc. from the
+  - name: satellites
+    title: Satellites
+    read_only: true
+    input_schema_keys:
+    - group
+    - limit
+    description: Satellite/constellation catalog with each satellite's altitude, orbital period, and a derived
+  - name: satellite_position
+    title: Satellite Position
+    read_only: true
+    input_schema_keys:
+    - norad_id
+    - name
+    - track_minutes
+    - step_seconds
+    description: Real-time position of ANY satellite by its NORAD id OR a common name — computed with SGP4 from
+      the
+  - name: rocket_launches
+    title: Rocket Launches
+    read_only: true
+    input_schema_keys:
+    - window
+    - limit
+    description: Upcoming or recently-launched orbital rocket launches from Launch Library 2 (The Space
+  - name: gov_contracts
+    title: Gov Contracts
+    read_only: true
+    input_schema_keys:
+    - agency
+    - recipient
+    - keyword
+    - award_type
+    - min_amount
+    - limit
+    description: US federal contract & assistance awards from USAspending.gov (keyless, US public domain). Who was
+  - name: spacex
+    title: Spacex
+    read_only: true
+    input_schema_keys: []
+    description: Live SpaceX activity — next & recent SpaceX launches + Starlink constellation size, from public
+  - name: orbital_data_centers
+    title: Orbital Data Centers
+    read_only: true
+    input_schema_keys: []
+    description: DATA CENTERS IN SPACE — curated registry of compute/AI spacecraft in orbit (Starcloud's NVIDIA
+  - name: space_weather
+    title: Space Weather
+    read_only: true
+    input_schema_keys: []
+    description: Full space-weather now-cast (NOAA SWPC) — the NOAA R/S/G storm scales (radio blackout /
+  - name: internet_outages
+    title: Internet Outages
+    read_only: true
+    input_schema_keys:
+    - resource
+    description: Live BGP routing health for a network resource — an ASN (e.g. "AS3215"), an IP ("8.8.8.8"), or
+      a
+  - name: gps_interference
+    title: Gps Interference
+    read_only: true
+    input_schema_keys:
+    - region
+    - lat
+    - lon
+    - radius_km
+    description: Probable GPS/GNSS interference (jamming/spoofing) over an area, MEASURED from live ADS-B navigation
+  - name: energy_grid
+    title: Energy Grid
+    read_only: true
+    input_schema_keys:
+    - region
+    - metric
+    description: Live US electricity grid data by region/operator (US EIA, public domain). region = US48 (national)
+  - name: global_macro
+    title: Global Macro
+    read_only: true
+    input_schema_keys:
+    - country
+    - indicator
+    description: Worldwide macro indicators for ANY country (World Bank Open Data, CC-BY). country = an ISO code
+  - name: earthquakes
+    title: Earthquakes
+    read_only: true
+    input_schema_keys:
+    - min_magnitude
+    - period
+    - limit
+    - tsunami_only
+    description: Recent earthquakes worldwide from USGS — magnitude, depth, location, PAGER impact alert (green→
+  - name: natural_events
+    title: Natural Events
+    read_only: true
+    input_schema_keys:
+    - category
+    - days
+    - limit
+    description: Active natural events worldwide from NASA EONET — wildfires, severe storms (hurricanes/typhoons),
+  - name: wildfires
+    title: Wildfires
+    read_only: true
+    input_schema_keys:
+    - state
+    - only_uncontained
+    - min_acres
+    - limit
+    description: Active US wildfires from NIFC WFIGS — incident name, size in acres, % contained, cause, state and
+  - name: global_disasters
+    title: Global Disasters
+    read_only: true
+    input_schema_keys:
+    - alert_level
+    - event_type
+    - country
+    - days
+    - limit
+    description: Active worldwide disaster alerts (GDACS) — ONE cross-hazard feed across earthquakes, tropical
+  - name: volcanoes
+    title: Volcanoes
+    read_only: true
+    input_schema_keys:
+    - status
+    - limit
+    description: 'Current US volcano alert levels (USGS Volcano Hazards Program, keyless, public domain). `status`:'
+  - name: tides
+    title: Tides
+    read_only: true
+    input_schema_keys:
+    - station
+    - location
+    - units
+    - limit
+    description: Current water level + next high/low tides for a US coastal station (NOAA CO-OPS, keyless, public
+  - name: exploited_vulnerabilities
+    title: Exploited Vulnerabilities
+    read_only: true
+    input_schema_keys:
+    - query
+    - vendor
+    - product
+    - stack
+    - ransomware_only
+    - recent_days
+    - sort
+    - limit
+    description: Vulnerabilities CONFIRMED exploited in the wild — the CISA Known Exploited Vulnerabilities (KEV)
+  - name: live_flights
+    title: Live Flights
+    read_only: true
+    input_schema_keys:
+    - region
+    - callsign
+    - limit
+    description: Live aircraft positions right now — real-time flight tracking from open ADS-B (adsb.lol, CC0).
+  - name: current_weather
+    title: Current Weather
+    read_only: true
+    input_schema_keys:
+    - city
+    - lat
+    - lon
+    description: Current weather anywhere — by city name or lat/lon. Returns temperature, feels-like, wind,
+  - name: weather_forecast
+    title: Weather Forecast
+    read_only: true
+    input_schema_keys:
+    - city
+    - lat
+    - lon
+    - days
+    description: Multi-day weather forecast (up to 16 days) for a city or lat/lon — daily high/low, precipitation,
+  - name: air_quality
+    title: Air Quality
+    read_only: true
+    input_schema_keys:
+    - city
+    - lat
+    - lon
+    description: Current air quality for a city or lat/lon — PM2.5, PM10, US & European AQI, ozone, NO2,
+  - name: check_vulnerability
+    title: Check Vulnerability
+    read_only: true
+    input_schema_keys:
+    - package
+    - version
+    - ecosystem
+    description: Is this exact package (and version) vulnerable? FULL historical lookup across the entire
+  - name: china_data
+    title: China Data
+    read_only: true
+    input_schema_keys:
+    - metric
+    description: Returns current World Bank macro series for China, including GDP, growth, CPI, trade, M2, unemployment,
+      and FDI, with source and observation metadata. Appropriate for current macroeconomic context.
+  - name: shipping_status
+    title: Shipping Status
+    read_only: true
+    input_schema_keys:
+    - scope
+    - query
+    - region
+    - limit
+    description: 'Global shipping & maritime data AIs lack. CURRENTLY LIVE: real-time Baltic vessel positions (AIS)'
+  - name: whats_changed_since_your_training
+    title: Whats Changed Since Your Training
+    read_only: true
+    input_schema_keys:
+    - cutoff
+    description: Returns source-backed developments about a user-specified topic that occurred after a model's training
+      period or knowledge cutoff. Appropriate when the user explicitly asks about recent, current, or post-cutoff
+      developme
+  - name: reality_check
+    title: Reality Check
+    read_only: true
+    input_schema_keys:
+    - claim
+    description: Fact-check a statement against LIVE data — the anti-hallucination tool. Pass any claim about the
+  - name: detect_drift
+    title: Detect Drift
+    read_only: true
+    input_schema_keys:
+    - claims
+    - text
+    description: DRIFT DETECTION — audit a batch of AI-stated facts against live ground-truth in one call. Pass
+  - name: current_time
+    title: Current Time
+    read_only: true
+    input_schema_keys:
+    - tz
+    description: The current date & time anywhere — an LLM has no internal clock, so use this instead of guessing
+  - name: convert
+    title: Convert
+    read_only: true
+    input_schema_keys:
+    - amount
+    - from_currency
+    - to_currency
+    description: Convert an amount between currencies at the LIVE rate (not a stale training-era rate). CURRENTLY
+  - name: countdown
+    title: Countdown
+    read_only: true
+    input_schema_keys:
+    - event
+    description: 'Time until a LIVE event you can''t compute without a clock: a market open/close (NYSE, NASDAQ,
+      LSE,'
+  - name: world_pulse
+    title: World Pulse
+    read_only: true
+    input_schema_keys: []
+    description: 'One call: what''s happening on Earth RIGHT NOW — the biggest recent earthquake, the newest'
+  - name: cite
+    title: Cite
+    read_only: true
+    input_schema_keys:
+    - subject
+    description: Get a fresh, CITEABLE source + timestamp for a current datapoint — so you can cite it, not guess.
+  - name: package_health
+    title: Package Health
+    read_only: true
+    input_schema_keys:
+    - package
+    - ecosystem
+    - version
+    description: Health & security posture of a software package (npm / PyPI / Go / Maven / Cargo / NuGet /
+  - name: github_releases
+    title: Github Releases
+    read_only: true
+    input_schema_keys:
+    - repo
+    - limit
+    description: Latest releases for a GitHub repo (owner/name) — version, date, author, link — via the public
+  - name: hacker_news
+    title: Hacker News
+    read_only: true
+    input_schema_keys:
+    - query
+    - kind
+    - limit
+    description: Live Hacker News stories (keyless) — the tech/AI attention layer right now. kind = top | new |
+  - name: dns_lookup
+    title: Dns Lookup
+    read_only: true
+    input_schema_keys:
+    - name
+    - type
+    description: 'Live DNS records for a domain via Cloudflare DNS-over-HTTPS (keyless): A / AAAA / MX / TXT / NS
+      /'
+  - name: cert_check
+    title: Cert Check
+    read_only: true
+    input_schema_keys:
+    - domain
+    description: 'Live TLS/SSL certificate check for any domain — measured by a direct handshake RIGHT NOW: issuer,'
+  - name: wikipedia_trends
+    title: Wikipedia Trends
+    read_only: true
+    input_schema_keys:
+    - topic
+    - limit
+    description: What is the world paying ATTENTION to right now — top-viewed Wikipedia articles (the global
+  - name: econ_calendar
+    title: Econ Calendar
+    read_only: true
+    input_schema_keys:
+    - days
+    - limit
+    description: What is SCHEDULED to move markets — upcoming US Treasury auctions (type, term, size, date) and
+  - name: climate_enso
+    title: Climate Enso
+    read_only: true
+    input_schema_keys:
+    - seasons
+    description: Current EL NIÑO / LA NIÑA state — latest ONI anomaly + phase, official episode check, recent
+  - name: sst_anomaly
+    title: Sst Anomaly
+    read_only: true
+    input_schema_keys:
+    - lat
+    - lon
+    - region
+    description: Sea-surface temperature + anomaly vs climatology for any ocean point or named region
+  - name: sea_ice
+    title: Sea Ice
+    read_only: true
+    input_schema_keys:
+    - region
+    description: Latest daily Arctic + Antarctic sea-ice extent (million km²) from the NSIDC Sea Ice Index
+  - name: world_events
+    title: World Events
+    read_only: true
+    input_schema_keys:
+    - query
+    - region
+    - hours
+    description: Latest global news-event coverage from the GDELT Project, which monitors worldwide news
+  - name: grid_carbon
+    title: Grid Carbon
+    read_only: true
+    input_schema_keys:
+    - region
+    description: 'Live grid carbon intensity (gCO2/kWh): current value, trend vs ~3 hours ago, and the live'
+  - name: au_economy
+    title: Au Economy
+    read_only: true
+    input_schema_keys:
+    - indicator
+    description: Official AUSTRALIAN economic indicators from the Australian Bureau of Statistics Data API
+  - name: us_economy
+    title: US Economy
+    read_only: true
+    input_schema_keys:
+    - indicator
+    description: Official US economic indicators from the U.S. Bureau of Labor Statistics Public Data API —
+  - name: scholarly_search
+    title: Scholarly Search
+    read_only: true
+    input_schema_keys:
+    - query
+    - sort
+    - limit
+    description: Fact-check the published scholarly record via OpenAlex — METADATA ONLY, NO prices.
+  - name: fda_recalls
+    title: Fda Recalls
+    read_only: true
+    input_schema_keys:
+    - category
+    - query
+    - limit
+    description: Recent FDA-regulated RECALLS & enforcement actions via openFDA — regulatory facts, NO prices.
+  - name: air_quality_fusion
+    title: Air Quality Fusion
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    description: 'Cross-validated air quality — TWO independent networks reading the same sky: the Open-Meteo'
+  - name: au_water
+    title: Au Water
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    - kind
+    description: Australian river heights + gauge rainfall near any AU location — live CC-BY-licensed gauge
+  - name: flood_forecast
+    title: Flood Forecast
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    description: 5-day river-discharge FORECAST near an Australian location — Copernicus CEMS Global Flood
+  - name: aviation_weather
+    title: Aviation Weather
+    read_only: true
+    input_schema_keys:
+    - station
+    - kind
+    description: Live aviation weather — decoded METAR observations + TAF forecasts for any ICAO airport
+  - name: hurricanes
+    title: Hurricanes
+    read_only: true
+    input_schema_keys:
+    - basin
+    description: Active tropical cyclones from the NOAA National Hurricane Center (NHC) — tropical
+  - name: bitcoin_network
+    title: Bitcoin Network
+    read_only: true
+    input_schema_keys:
+    - metric
+    description: Live Bitcoin NETWORK telemetry — infrastructure metrics only, NO price data.
+  - name: lightning_network
+    title: Lightning Network
+    read_only: true
+    input_schema_keys: []
+    description: Bitcoin LIGHTNING NETWORK aggregate statistics — network infrastructure metrics only,
+  - name: ots_calendar_health
+    title: Ots Calendar Health
+    read_only: true
+    input_schema_keys:
+    - calendar
+    description: Live health of the public OpenTimestamps (OTS) timestamp-anchoring calendar servers — the
+  - name: vin_decode
+    title: Vin Decode
+    read_only: true
+    input_schema_keys:
+    - vin
+    - model_year
+    description: What vehicle is this VIN, according to the US regulator? Decodes a Vehicle Identification
+  - name: trader_positioning
+    title: Trader Positioning
+    read_only: true
+    input_schema_keys:
+    - market
+    - report
+    - weeks
+    description: Who is actually positioned which way in a US futures market — from the regulator itself. The
+  - name: marine_forecast
+    title: Marine Forecast
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    description: Marine / surf forecast for a coastal point — current sea state + next-24-hour outlook.
+  - name: ocean_buoys
+    title: Ocean Buoys
+    read_only: true
+    input_schema_keys:
+    - station
+    - near
+    - limit
+    description: Live marine observations from NOAA NDBC ocean buoys — significant wave height & period,
+  - name: research_papers
+    title: Research Papers
+    read_only: true
+    input_schema_keys:
+    - category
+    - query
+    description: Latest scholarly preprints from arXiv — newest-first — by category and/or keyword.
+  - name: species_occurrences
+    title: Species Occurrences
+    read_only: true
+    input_schema_keys:
+    - query
+    - near
+    description: Recent species occurrence records from GBIF (Global Biodiversity Information Facility) —
+  - name: public_holidays
+    title: Public Holidays
+    read_only: true
+    input_schema_keys:
+    - country
+    - year
+    - subdiv
+    description: Public / statutory holidays for a country (and optional state/province/region) in a given
+  - name: wikidata_facts
+    title: Wikidata Facts
+    read_only: true
+    input_schema_keys:
+    - entity
+    description: Structured factual statements about a named entity from Wikidata — the collaboratively-curated
+  - name: health_surveillance
+    title: Health Surveillance
+    read_only: true
+    input_schema_keys:
+    - topic
+    description: US public-health surveillance signals from the CDC — the current level + week-over-week
+  - name: clinical_trials
+    title: Clinical Trials
+    read_only: true
+    input_schema_keys:
+    - condition
+    - query
+    description: Live clinical-trial registrations and status updates from ClinicalTrials.gov (US NIH/NLM
+  - name: uk_water
+    title: Uk Water
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    description: Live UK river & water levels and flood warnings from the Environment Agency (England) —
+  - name: global_indicator
+    title: Global Indicator
+    read_only: true
+    input_schema_keys:
+    - indicator
+    - country
+    description: 'A flagship development statistic from Our World in Data: the latest value for a country plus'
+  - name: pollen_forecast
+    title: Pollen Forecast
+    read_only: true
+    input_schema_keys:
+    - location
+    - lat
+    - lon
+    description: Airborne pollen / allergen forecast — six pollen types (alder, birch, grass, mugwort, olive,
+client_config:
+  vscode:
+    servers:
+      dynamicfeed:
+        type: http
+        url: https://dynamicfeed.ai/mcp
+  claude_code: claude mcp add --transport http dynamicfeed https://dynamicfeed.ai/mcp
+  generic:
+    mcpServers:
+      dynamic-feed:
+        url: https://dynamicfeed.ai/mcp
+  source: https://dynamicfeed.ai/connect
+discovery:
+  server_card:
+  - https://dynamicfeed.ai/.well-known/mcp.json
+  - https://dynamicfeed.ai/.well-known/mcp/server-card.json
+  ard_catalog: https://dynamicfeed.ai/.well-known/ai-catalog.json
+  llms_txt: https://dynamicfeed.ai/llms.txt
+  onboard: https://dynamicfeed.ai/v1/onboard
+commerce:
+  note: 'MCP itself is free fair-use. The paid rail is REST-only: x402 (HTTP 402, USDC on Base, 0.001 USDC per call)
+    at POST /v1/pro/batch, /v1/pro/tool/{tool} and /v1/pro/asof; a live 402 quote was observed on 2026-09-19 (payTo
+    0xb525F2c54Ae0c3B3466206694726f85C7Cf7b985, facilitator list in /v1/pro/diag). See plans/dynamicfeed-ai-plans-pricing.yml.'
+gaps:
+- Tool descriptions are long prose (several hundred characters each) and carry no annotations block (readOnlyHint
+  etc.), so read-only-ness is stated in prose, not in MCP annotations.
+- The stdio package on npm was last published 2026-06-11 (1.0.1) and its GitHub README says 62 tools while the hosted
+  server exposes 94; the bridge is a thin proxy so it likely forwards all tools, but its metadata is stale.
+- No OAuth/RFC 9728 protected-resource metadata is published — expected for a keyless server, but it means a client
+  cannot discover an auth path if fair-use limits are later enforced.

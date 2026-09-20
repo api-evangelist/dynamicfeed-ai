@@ -1,0 +1,86 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/uptime, https://dynamicfeed.ai/status.json, https://dynamicfeed.ai/security/advisories,
+  https://dynamicfeed.ai/trust, https://dynamicfeed.ai/terms and https://dynamicfeed.ai/llms.txt; deprecated operations
+  derived from openapi/_original/dynamicfeed-ai-openapi.json
+versioning:
+  scheme: path-prefixed v1 for the agent/robot surface; legacy unversioned feed routes alongside
+  current_version: v1
+  spec_url: https://dynamicfeed.ai/openapi.json
+  base_url: https://dynamicfeed.ai
+  info_version: 1.0.0
+  mcp_server_version: 0.8.0
+  policy_published: false
+  note: 'Two generations coexist in one contract: 66 /v1/* operations and ~80 unversioned routes (/earthquakes,
+    /weather, /models …) that predate them. No versioning policy page exists; the Terms say "Features and data may
+    change or be discontinued at any time."'
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  deprecated_operations: []
+  disabled_operations:
+  - operationId: v1_vc_v1_vc_post
+    path: POST /v1/vc
+    state: returns 503, DISABLED_SECURITY_QUARANTINE
+    announced_in:
+    - https://dynamicfeed.ai/llms.txt
+    - https://dynamicfeed.ai/.well-known/agent-card.json (capabilities.extensions ground-truth/v1)
+    note: Still present in the OpenAPI with no deprecated flag.
+  note: 'Zero of 158 operations carry deprecated: true and no Sunset/Deprecation header is declared. The only lifecycle
+    events the provider has published are the /v1/vc quarantine (prose in llms.txt and the agent card) and the 2026-07-11
+    signing-key rotation (a cryptographic deprecation with a machine-readable registry, see below).'
+key_lifecycle:
+  registry: https://dynamicfeed.ai/.well-known/signing-key-registry.json
+  revision: 1
+  active_key: df-ed25519-6ca0de29113b
+  retired_keys:
+  - key_id: df-ed25519-4cb32e72f333
+    status: compromised
+    active_from: '2026-06-06T00:00:00Z'
+    retired_at: '2026-07-11T09:49:41Z'
+    compromised_after: '2026-07-11T00:00:00Z'
+  advisory: DF-SA-2026-001 at https://dynamicfeed.ai/security/advisories (published 2026-07-11, resolved same day)
+  note: 'This is the most concrete lifecycle commitment the provider publishes: a machine-readable key registry
+    with explicit status, rollback-protection and verification-policy fields.'
+status_page:
+  url: https://dynamicfeed.ai/uptime
+  status: 200
+  verified: '2026-09-19'
+  machine_readable: https://dynamicfeed.ai/status.json
+  ops_page: https://dynamicfeed.ai/ops
+  provider: first-party (process-observed)
+  components_observed:
+  - API & website
+  - MCP endpoint (/mcp)
+  - Database
+  - Data ingestion
+  - Signing key lifecycle
+  - Live feeds (94/94 healthy)
+  - Satellite TLE mirror (degraded / delayed at probe time)
+  incident_history:
+  - date: '2026-07-11'
+    title: Cryptographic maintenance (signing-key rotation)
+    state: Completed
+  note: status.json is Ed25519-signed like every other response. The provider labels it "process-observed platform
+    status; external or unobserved dependencies are labelled."
+sla:
+  published: false
+  note: '"A formal uptime SLA and priority support are part of an enterprise agreement" (/trust). The pricing page
+    states "No quotas, service levels or retention periods are promised on this page."'
+archive:
+  as_of_replay: GET /v1/asof (paid) replays any served datapoint since 2026-06-07
+  daily_checkpoints: GET /v1/checkpoints (30 days, chained digests)
+  notary_log: GET /v1/notary/log (append-only, head at idx 1975 on 2026-09-20)
+support_channels:
+- hello@dynamicfeed.ai (security.txt Contact and privacy policy)
+- https://dynamicfeed.ai/partners (design-partner pilot)
+- https://dynamicfeed.ai/enterprise
+last_updated_signals:
+  llms_txt: '2026-07-06'
+  terms: '2026-06-02'
+  privacy: '2026-05-31'
+  receipt_spec: '2026-07-06'
+  mcp_product_registry: '2026-07-19'
+  sitemap_home_lastmod: '2026-07-12'

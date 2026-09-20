@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/receipt-v1.json",
+  "title": "DF-VERIFY/1 — receipt/v1 profile",
+  "description": "A signed, timestamped record of an arbitrary asserted claim or datum — the audit artifact for 'what an AI was told (or asserted), and when.' The detached Ed25519 signature covers the whole object except its `signature` field, canonicalized json-sorted-compact (see https://dynamicfeed.ai/standard). Verifies identically to awareness/v1.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "data", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "receipt/v1" },
+    "issuer": { "type": "string", "description": "domain of the signing issuer, e.g. dynamicfeed.ai" },
+    "issued_at": { "type": "string", "format": "date-time", "description": "the moment the claim was asserted/recorded" },
+    "data": { "description": "the asserted claim or datum — any JSON value the issuer is putting on the record" },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "canonicalization", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "canonicalization": { "const": "json-sorted-compact" },
+        "sig": { "type": "string", "description": "base64url-encoded 64-byte Ed25519 signature" },
+        "ephemeral_key": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

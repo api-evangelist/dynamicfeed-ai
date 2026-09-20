@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/attestation-v1.json",
+  "title": "DF-VERIFY/1 — attestation/v1 profile (parametric trigger)",
+  "description": "A signed, tamper-evident record that a parametric trigger ('metric op threshold' at a location) was MET or NOT MET against the live measurement at issued_at. Detached Ed25519 signature over the object minus its `signature`, json-sorted-compact. The dispute-proof oracle a parametric-insurance payout settles against.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "trigger", "observed", "met", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "attestation/v1" },
+    "issuer": { "type": "string" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "trigger": {
+      "type": "object",
+      "required": ["metric", "op", "threshold"],
+      "properties": {
+        "metric": { "type": "string" },
+        "op": { "enum": ["gt", "gte", "lt", "lte"] },
+        "threshold": { "type": "number" },
+        "location": { "type": "object" }
+      },
+      "additionalProperties": true
+    },
+    "observed": {
+      "type": "object",
+      "required": ["value", "source"],
+      "properties": {
+        "value": {},
+        "unit": { "type": ["string", "null"] },
+        "source": { "type": "string" },
+        "measured_at": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "met": { "type": "boolean" },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "canonicalization", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "canonicalization": { "const": "json-sorted-compact" },
+        "sig": { "type": "string" },
+        "ephemeral_key": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

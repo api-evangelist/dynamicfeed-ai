@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/awareness-v1.json",
+  "title": "DF-VERIFY/1 — awareness/v1 profile",
+  "description": "A signed go / caution / no-go awareness verdict for an acting system, grounded in live facts. The detached Ed25519 signature covers the whole object except its `signature` field, canonicalized json-sorted-compact (see https://dynamicfeed.ai/standard).",
+  "type": "object",
+  "required": ["schema", "issuer", "snapshot_id", "issued_at", "verdict", "degraded", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "awareness/v1" },
+    "issuer": { "type": "string", "description": "domain of the signing issuer, e.g. dynamicfeed.ai" },
+    "snapshot_id": { "type": "string", "description": "unique id for this signed snapshot" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "robot": {
+      "type": "object",
+      "properties": {
+        "id": { "type": ["string", "null"] },
+        "class": { "enum": ["ground", "aerial", "marine", "orbital", "humanoid"] }
+      },
+      "additionalProperties": true
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "lat": { "type": "number", "minimum": -90, "maximum": 90 },
+        "lon": { "type": "number", "minimum": -180, "maximum": 180 },
+        "alt_m": { "type": ["number", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "verdict": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["go", "caution", "no-go"] },
+        "reasons": { "type": "array", "items": { "type": "string" } },
+        "advisory": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "value", "source"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain": { "type": "string" },
+          "value": { "type": ["number", "string", "boolean", "null"] },
+          "unit": { "type": ["string", "null"] },
+          "observed_at": { "type": ["string", "null"] },
+          "age_s": { "type": ["number", "null"] },
+          "source": { "type": "string" },
+          "source_url": { "type": ["string", "null"] },
+          "confidence": { "type": ["number", "null"] },
+          "stale": { "type": "boolean" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "freshness": {
+      "type": "object",
+      "properties": {
+        "min_age_s": { "type": ["number", "null"] },
+        "max_age_s": { "type": ["number", "null"] },
+        "stalest_field": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "degraded": { "type": "boolean" },
+    "degraded_sources": { "type": "array", "items": { "type": "string" } },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "canonicalization", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "canonicalization": { "const": "json-sorted-compact" },
+        "sig": { "type": "string", "description": "base64url-encoded 64-byte Ed25519 signature" },
+        "ephemeral_key": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "if": {
+    "properties": { "degraded": { "const": true } },
+    "required": ["degraded"]
+  },
+  "then": {
+    "description": "Safety floor: a degraded snapshot (missing/stale safety inputs) MUST NOT be `go`.",
+    "properties": { "verdict": { "properties": { "status": { "enum": ["caution", "no-go"] } } } }
+  }
+}

@@ -1,0 +1,12 @@
+# Dynamic Feed — security contact (RFC 9116)
+# Serve this at BOTH:
+#   https://dynamicfeed.ai/.well-known/security.txt   (canonical location)
+#   https://dynamicfeed.ai/security.txt                (legacy fallback)
+# Security advisories:
+#   https://dynamicfeed.ai/security/advisories
+
+Contact: mailto:hello@dynamicfeed.ai
+Expires: 2027-06-03T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://dynamicfeed.ai/.well-known/security.txt
+Policy: https://dynamicfeed.ai/terms

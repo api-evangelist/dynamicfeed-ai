@@ -1,0 +1,96 @@
+generated: '2026-09-19'
+method: derived
+source: openapi/_original/dynamicfeed-ai-openapi.json (declared responses) plus live unauthenticated responses observed
+  2026-09-19 on https://dynamicfeed.ai (/status 401, /v1/pro/tool/current_time 402, /v1/batch malformed body 400,
+  /v1/vc quarantine per llms.txt)
+docs: https://dynamicfeed.ai/llms.txt
+format: fastapi-detail
+rfc9457: false
+envelope:
+  media_type: application/json
+  shapes:
+  - name: detail-string
+    used_for: 401, 404, 402 (free key on paid route), 503
+    example:
+      detail: Missing API key. Get a free one at POST /signup, then send it as the 'X-API-Key' header.
+  - name: HTTPValidationError
+    used_for: '422'
+    schema: components.schemas.HTTPValidationError
+    example:
+      detail:
+      - loc:
+        - query
+        - limit
+        msg: value is not a valid integer
+        type: int_parsing
+  - name: error-string
+    used_for: 400 on /v1/batch
+    example:
+      error: provide {"calls":[{"tool":..., "args":{...}}, ...]}
+      available_tools:
+      - ai_models
+      - '...'
+  - name: x402
+    used_for: 402 on /v1/pro/*
+    example:
+      x402Version: 1
+      error: X-PAYMENT required (x402).
+      accepts:
+      - scheme: exact
+        network: base
+        maxAmountRequired: '1000'
+        payTo: '0xb525F2c54Ae0c3B3466206694726f85C7Cf7b985'
+  - name: per-call-in-batch
+    used_for: a failed item inside a 200 batch response
+    example:
+      tool: current_weather
+      ok: false
+      error: <message>
+    note: POST /v1/batch returns 200 with per-item ok/error; a slow upstream degrades one item (20 s per-call deadline)
+      rather than failing the request.
+  note: The contract declares only 200 and 422 (112 of 158 operations declare the 422). Everything else below was
+    observed live or read from the docs; no status is asserted that was not seen or documented.
+problem_types:
+- status: 400
+  title: Malformed batch body
+  occurrences_declared: 0
+  observed: true
+  remediation: Send {"calls":[{"tool":"<name>","args":{}}]}; the 400 body lists available_tools.
+- status: 401
+  title: Missing or invalid API key
+  occurrences_declared: 0
+  observed: true
+  applies_to: 'keyed routes: /status, /v1/me, /v1/watchlist, /v1/webhooks, /whats-new, direct feed GETs such as
+    /earthquakes'
+  remediation: POST /signup for a free key and send it as X-API-Key; or use the keyless /mcp or POST /v1/batch instead.
+- status: 402
+  title: Payment required (x402)
+  occurrences_declared: 0
+  observed: true
+  applies_to: /v1/pro/batch, /v1/pro/tool/{tool}, /v1/pro/asof; also /v1/asof with a free key ("402 with an upgrade
+    pointer")
+  remediation: Let an x402 client pay 0.001 USDC on Base and retry with X-PAYMENT; or upgrade the key for /v1/asof.
+- status: 422
+  title: Validation Error
+  occurrences_declared: 112
+  observed: false
+  schema: HTTPValidationError
+  remediation: Fix the parameter named in detail[].loc.
+- status: 503
+  title: Endpoint disabled (security quarantine)
+  occurrences_declared: 0
+  observed: false
+  documented: true
+  applies_to: POST /v1/vc
+  remediation: Do not send mint requests; llms.txt and the agent card both state the route returns 503 until the
+    GroundTruthReceipt VC wrapper is fixed.
+- status: 429
+  title: Rate limited
+  occurrences_declared: 0
+  observed: false
+  documented: false
+  note: No 429 is declared or documented. The dashboard says "DAILY QUOTA REACHED … resets at midnight UTC" but
+    the status code used is not published.
+consistency_gap: 'Three different error envelopes ({detail: string}, {detail: [...]}, {error: string}) plus the
+  x402 body; no error-code registry; the OpenAPI declares none of the 400/401/402/503 behaviours the API actually
+  exhibits.'

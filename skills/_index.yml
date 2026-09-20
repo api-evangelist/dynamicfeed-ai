@@ -1,0 +1,32 @@
+generated: '2026-09-19'
+method: generated
+source: 'openapi/_original/dynamicfeed-ai-openapi.json (all operationIds verified against the spec), https://dynamicfeed.ai/llms.txt
+  and https://dynamicfeed.ai/v1. No provider-published skills were found: /AGENTS.md, /skills.md and /.well-known/agent-skills/index.json
+  return 404 on dynamicfeed.ai, and the Fluxdyne/agent repo carries README.md + INTEGRATIONS.md but no SKILL.md
+  or AGENTS.md.'
+skills:
+- file: dynamicfeed-ai-verify-before-answer.md
+  name: dynamicfeed-ai-verify-before-answer
+  method: generated
+  description: 'Ground a draft answer against live, signed data before committing to it: batch the relevant tools
+    keyless, run the guard/drift checks, and verify the Ed25519 signature offline.'
+  operations: 6
+- file: dynamicfeed-ai-robot-awareness.md
+  name: dynamicfeed-ai-robot-awareness
+  method: generated
+  description: Get a signed go / caution / no-go verdict for a robot or embodied agent at a place and time, then
+    anchor it with an RFC 3161 timestamp so the decision record is independently verifiable.
+  operations: 8
+- file: dynamicfeed-ai-signed-receipts.md
+  name: dynamicfeed-ai-signed-receipts
+  method: generated
+  description: Mint and independently verify signed receipts of what an agent did — transaction witness, proof-of-model
+    inference receipt, eval receipt — and check them against the append-only notary log and daily checkpoints.
+  operations: 11
+- file: dynamicfeed-ai-watch-and-notify.md
+  name: dynamicfeed-ai-watch-and-notify
+  method: generated
+  description: 'Monitor a set of live values and get pushed when they change: a per-key watchlist pulled in one
+    call, HMAC-signed webhooks on change, or a keyless SSE stream.'
+  operations: 9
+provider_published: []

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/intensity-v1.json",
+  "title": "DF-VERIFY/1 — intensity/v1 profile (parametric intensity-at-location)",
+  "description": "A signed, tamper-evident, independently-reproducible reading of a peril's intensity at an exact coordinate — the settlement-grade input a parametric trigger evaluates against. This is the difference between an event feed ('an earthquake happened') and a trigger source ('the value at this lat/lon was X'). Carries the value + unit, the resolution method (interpolation_method), a latency tier, and a re-fetchable source_url + reproducible raw_reading_hash (see hash_method / hashed_path). Detached Ed25519 signature over the object minus its `signature`, json-sorted-compact. SCOPE: attests the reading at the cited official source/gauge — NOT a basin-wide determination or ground-truth physical loss.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "peril", "value", "unit", "location", "observation", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "intensity/v1" },
+    "issuer": { "type": "string" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "peril": { "type": "string", "description": "flood | drought | wildfire | earthquake | tropical_cyclone | excess_rainfall | hail" },
+    "query": {
+      "type": "object",
+      "properties": {
+        "lat": { "type": "number" },
+        "lon": { "type": "number" },
+        "metric": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "value": { "description": "the intensity value at the queried coordinate" },
+    "unit": { "type": "string" },
+    "all_metrics": { "type": "object", "description": "every metric available at this location, with units" },
+    "location": {
+      "type": "object",
+      "description": "the resolved source location. For gauge perils this is the nearest named station and its distance_km from the query.",
+      "properties": {
+        "site_no": { "type": ["string", "null"] },
+        "site_name": { "type": ["string", "null"] },
+        "latitude": { "type": ["number", "null"] },
+        "longitude": { "type": ["number", "null"] },
+        "distance_km": { "type": ["number", "null"] },
+        "grid_version": { "type": ["string", "null"], "description": "for gridded perils (ShakeMap etc.): the exact product version sampled" }
+      },
+      "additionalProperties": true
+    },
+    "latency_tier": { "enum": ["detection", "provisional", "operational", "authoritative"], "description": "detection/provisional = fast, may revise; authoritative/final = settles high-value contracts" },
+    "interpolation_method": { "type": "string", "description": "how the point value was resolved: none (direct gauge), bilinear (grid), point-in-polygon, or a named parametric model" },
+    "observation": {
+      "type": "object",
+      "required": ["source", "source_url", "raw_reading_hash"],
+      "properties": {
+        "observed_at_utc": { "type": ["string", "null"] },
+        "source": { "type": "string" },
+        "source_url": { "type": "string", "description": "exact, re-fetchable upstream URL" },
+        "raw_reading_hash": { "type": "string", "description": "sha256:<hex> of the canonical source reading (see hash_method)" },
+        "hash_method": { "type": "string", "description": "the exact, reproducible recipe to recompute raw_reading_hash from source_url" },
+        "hashed_path": { "type": ["string", "null"], "description": "the JSON path within the source response that is hashed (stable subset)" }
+      },
+      "additionalProperties": true
+    },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "canonicalization", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "canonicalization": { "const": "json-sorted-compact" },
+        "sig": { "type": "string" },
+        "ephemeral_key": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

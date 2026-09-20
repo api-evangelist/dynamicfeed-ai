@@ -1,0 +1,38 @@
+generated: '2026-09-19'
+method: searched
+source: https://registry.npmjs.org/@dynamicfeed%2Fverify (bin dynamicfeed-verify) and https://registry.npmjs.org/dynamicfeed-mcp
+  (bin dynamicfeed-mcp); usage per https://dynamicfeed.ai/standard and https://dynamicfeed.ai/connect
+summary: 'Dynamic Feed publishes no general-purpose API CLI. Two first-party npm packages expose executables: dynamicfeed-verify
+  (offline DF-VERIFY/1 signature check of any signed response, from @dynamicfeed/verify) and dynamicfeed-mcp (the
+  stdio MCP bridge). The /connect page also emits a copy-paste "verify command" for re-checking a signed test result
+  on your own machine.'
+clis:
+- name: dynamicfeed-verify
+  package: '@dynamicfeed/verify'
+  registry: npm
+  version: 1.0.1
+  published: '2026-07-09'
+  install:
+  - npm install -g @dynamicfeed/verify
+  - npx @dynamicfeed/verify
+  purpose: Verify an Ed25519-signed Dynamic Feed response or receipt against /.well-known/keys using json-sorted-compact
+    canonicalization.
+  commands:
+  - command: dynamicfeed-verify <file|stdin>
+    description: Check a signed JSON envelope; exits non-zero on failure.
+  caveat: Per advisory DF-SA-2026-001 this version does not enforce the signing-key lifecycle registry; the required
+    >= 1.0.2 is not yet on npm.
+- name: dynamicfeed-mcp
+  package: dynamicfeed-mcp
+  registry: npm
+  version: 1.0.1
+  published: '2026-06-11'
+  install:
+  - npx -y dynamicfeed-mcp
+  - uvx dynamicfeed-mcp
+  purpose: Run the Dynamic Feed MCP server as a local stdio process bridging to https://dynamicfeed.ai for clients
+    that cannot reach remote MCP.
+  commands:
+  - command: npx -y dynamicfeed-mcp
+    description: Start the stdio bridge; configure as a stdio server in the MCP client.
+detail: packages/dynamicfeed-ai-packages.yml

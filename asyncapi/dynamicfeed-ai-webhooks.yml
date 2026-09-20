@@ -1,0 +1,64 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/llms.txt (REST API section) and the operation descriptions of POST /v1/webhooks,
+  POST /v1/webhooks/test and GET /v1/stream in openapi/_original/dynamicfeed-ai-openapi.json
+docs: https://dynamicfeed.ai/llms.txt
+asyncapi_published: false
+asyncapi_note: 'No AsyncAPI document: /asyncapi.json and /asyncapi.yaml return JSON 404 on dynamicfeed.ai, the OpenAPI
+  declares no top-level webhooks object and no callbacks, and the Fluxdyne GitHub org has none. The event surface
+  below is captured from prose and operation descriptions; nothing was fabricated.'
+surfaces:
+- id: push-on-change-webhooks
+  kind: outbound HTTPS webhook
+  description: Register a callback URL bound to one tool + args; Dynamic Feed POSTs a signed event when that tool's
+    value CHANGES. Per-user (requires a free X-API-Key from POST /signup).
+  operations:
+    create: v1_webhooks_create_v1_webhooks_post
+    list: v1_webhooks_list_v1_webhooks_get
+    delete: v1_webhooks_delete_v1_webhooks_delete
+    test: v1_webhooks_test_v1_webhooks_test_post
+  registration_body:
+    url: https://you.example/hook
+    tool: exploited_vulnerabilities
+    args: {}
+  url_validation: 'SSRF-safe: public http/https only'
+  signing:
+    scheme: HMAC-SHA256
+    header: X-DynamicFeed-Signature
+    format: sha256=<hex>
+    secret: one-time secret returned by the create call; never re-shown
+    verification: Recompute HMAC-SHA256 of the raw body with the secret and compare to the header.
+  event_catalog_published: false
+  event_catalog_note: No event-type list is published; the trigger is "value changed" for whichever tool was registered,
+    so the event catalogue is the 94-tool registry itself.
+  retry_policy_published: false
+  delivery_headers_published:
+  - X-DynamicFeed-Signature
+- id: sse-live-stream
+  kind: Server-Sent Events
+  description: GET /v1/stream?tool=<tool>&args=<json>&interval=<sec>&count=<n> pushes the tool's current value as
+    a `value` event every interval seconds until count updates or disconnect. Keyless.
+  operations:
+    stream: v1_stream_v1_stream_get
+  event_name: value
+  bounds:
+    interval_seconds: 5-300
+    count: 1-60
+  auth: none
+  example: https://dynamicfeed.ai/v1/stream?tool=current_time&count=3&interval=5
+  probe:
+    url: https://dynamicfeed.ai/sse
+    status: 200
+    content_type: text/event-stream; charset=utf-8
+    note: The MCP legacy SSE transport at /sse held the connection open (curl timed out at 20 s with 126 bytes received),
+      confirming a live event-stream endpoint; /v1/stream was not held open during this pass.
+- id: inbound-billing-webhook
+  kind: inbound (Stripe -> Dynamic Feed)
+  description: POST /billing/webhook is the provider's own Stripe receiver (billing_webhook_billing_webhook_post).
+    It is in the OpenAPI because the framework exports every route, not because it is a consumer surface.
+  operations:
+    receive: billing_webhook_billing_webhook_post
+  consumer_facing: false
+gaps:
+- No AsyncAPI, no event-type catalogue, no retry/backoff or timeout policy, no signature timestamp/replay protection
+  documented (the HMAC covers the body only).

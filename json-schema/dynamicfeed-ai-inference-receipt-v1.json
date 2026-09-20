@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dynamicfeed.ai/schemas/inference-receipt-v1.json",
+  "title": "Dynamic Feed — inference-receipt/v1",
+  "description": "A neutral third-party WITNESS receipt for a single AI model inference. A profile of receipt/v1: the same flat, detached-Ed25519-signed envelope, so /verify.js and scripts/verify_awareness.py verify it unchanged. The caller hashes the prompt and response LOCALLY and sends only fixed-length sha256 hashes plus non-PII metadata (the model the provider's own response reported, the model the caller requested, latency, the provider's own fallback flag). Dynamic Feed never sees the prompt or response. The receipt proves this exact inference record EXISTED within a time window and is INTACT (tamper-evident), and which agent key (if any) co-signed. It does NOT independently verify which model actually ran, does NOT adjudicate that a downgrade occurred, and does NOT score answer quality — model_match is a literal comparison of the two caller-supplied strings, and the holder draws any further inference. Provenance is not truth.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "data", "signature"],
+  "properties": {
+    "schema": {"const": "inference-receipt/v1"},
+    "issuer": {"type": "string", "const": "dynamicfeed.ai", "description": "The witness. Verify its key at GET /.well-known/keys."},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "data": {
+      "type": "object",
+      "required": ["content_hash", "mode", "claimed_model", "prompt_sha256", "response_sha256", "witnessed_at", "claim_boundary"],
+      "properties": {
+        "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "sha256 of the canonical inference record (the commitment over claimed_model, requested_model, prompt_sha256, response_sha256, latency_ms, token_count, fallback_flag, provider, region)."},
+        "mode": {"type": "string", "enum": ["inference", "inference (sample)"]},
+        "claimed_model": {"type": "string", "description": "The model identifier the PROVIDER's own response reported (e.g. its response `model` field). Caller-supplied; Dynamic Feed does not independently verify which model ran."},
+        "requested_model": {"type": ["string", "null"], "description": "The model the caller asked the provider for. Caller-supplied."},
+        "model_match": {"type": ["boolean", "null"], "description": "A literal string comparison: requested_model == claimed_model (null when requested_model is absent). A mechanical fact about two caller-supplied strings — NOT a judgment that a downgrade occurred."},
+        "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "sha256 of the prompt, computed by the caller. The prompt itself is never sent to Dynamic Feed."},
+        "response_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "sha256 of the response, computed by the caller. The response itself is never sent to Dynamic Feed."},
+        "latency_ms": {"type": ["number", "null"], "description": "Round-trip latency the caller observed, in milliseconds. Caller-supplied."},
+        "token_count": {"type": ["object", "integer", "null"], "description": "Token usage the provider reported (e.g. {prompt, completion, total}). Caller-supplied, non-PII."},
+        "fallback_flag": {"type": ["boolean", "string", "null"], "description": "The PROVIDER's OWN fallback / degradation / routing indicator, if the provider exposed one. Caller-supplied; Dynamic Feed reports it verbatim and makes no claim about it."},
+        "provider": {"type": ["string", "null"], "description": "Opaque provider label (e.g. an API host). Caller-supplied, non-PII."},
+        "region": {"type": ["string", "null"], "description": "Opaque region label the inference was served from. Caller-supplied, non-PII."},
+        "witnessed_at": {"type": "string", "format": "date-time"},
+        "window": {
+          "type": "object",
+          "description": "Two-sided time bound. The lower bound (a recent independent reference committed inside the signed record) is the NOT-BEFORE; an RFC 3161 timestamp from an independent timestamping authority over the notary log head (POST /v1/anchor) is the EXISTED-BY upper bound. Together they give a provable creation window no single party controls.",
+          "properties": {
+            "btc_lower": {
+              "type": "object",
+              "properties": {
+                "block_hash": {"type": "string"},
+                "height": {"type": "integer"},
+                "block_time": {"type": ["string", "null"]}
+              }
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "description": "Optional BYO-key agent co-signature, verified BEFORE witnessing ('agent attested, Dynamic Feed witnessed').",
+          "properties": {
+            "pubkey_b64": {"type": "string"},
+            "signature_b64": {"type": "string"},
+            "context_bound": {"type": "boolean"},
+            "signature_valid": {"const": true}
+          }
+        },
+        "claim_boundary": {"type": "string", "description": "The witness-only boundary, baked into the signed bytes so no log can strip it."}
+      }
+    },
+    "transparency": {
+      "type": "object",
+      "description": "Linkage into the public append-only notary log (GET /v1/notary/log); the log head is RFC 3161 timestamped daily by an independent timestamping authority.",
+      "properties": {
+        "log_index": {"type": "integer"},
+        "prev_hash": {"type": "string"},
+        "entry_hash": {"type": "string"},
+        "entry_url": {"type": "string"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "sig"],
+      "description": "Detached Ed25519 signature over the canonical bytes of this envelope with the `signature` field removed (json-sorted-compact: sort_keys, comma-colon separators, UTF-8). Verify against GET /.well-known/keys.",
+      "properties": {
+        "alg": {"const": "Ed25519"},
+        "key_id": {"type": "string"},
+        "canonicalization": {"const": "json-sorted-compact"},
+        "sig": {"type": "string", "description": "base64url-encoded Ed25519 signature"}
+      }
+    }
+  }
+}

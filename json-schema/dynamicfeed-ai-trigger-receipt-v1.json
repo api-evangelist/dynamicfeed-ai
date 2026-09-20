@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/trigger-receipt-v1.json",
+  "title": "DF-VERIFY/1 — trigger-receipt/v1 profile (parametric catastrophe settlement)",
+  "description": "A signed, tamper-evident, independently-reproducible record that a parametric catastrophe trigger ('metric operator threshold' at a location) was MET or NOT MET against an authoritative source reading. Carries the four properties that end a parametric payout dispute: (1) a pinned + hashed methodology, (2) the exact re-fetchable source_url plus a raw_reading_hash anyone can reproduce, (3) a deterministic determination (triggered + payout_factor + rationale) re-computable by any party, (4) an Ed25519 signature (independently time-stamped by an independent RFC 3161 authority via /v1/anchor). The neutral calculation-agent-of-record artifact a parametric insurer, reinsurer, regulator, or smart contract settles against. Detached Ed25519 signature over the object minus its `signature`, json-sorted-compact. SCOPE: attests what the official source reported and what the pinned methodology implies — NOT ground-truth physical loss.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "trigger_definition", "observation", "determination", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "trigger-receipt/v1" },
+    "issuer": { "type": "string" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "peril": { "type": "string", "description": "earthquake | tropical_cyclone | flood | excess_rainfall | wildfire | drought | volcanic | space_weather | weather" },
+    "contract_ref": { "type": "string", "description": "opaque caller/policy id — MUST NOT contain PII" },
+    "trigger_definition": {
+      "type": "object",
+      "description": "The trigger as pinned at contract inception. The methodology is frozen and hashed so nobody can move the goalposts after the event.",
+      "required": ["metric", "operator", "threshold", "methodology_hash"],
+      "properties": {
+        "metric": { "type": "string" },
+        "operator": { "enum": ["gt", "gte", "lt", "lte"] },
+        "threshold": { "type": "number" },
+        "location": { "type": "object" },
+        "observation_window": {
+          "type": "object",
+          "properties": {
+            "start_utc": { "type": ["string", "null"], "format": "date-time" },
+            "end_utc": { "type": ["string", "null"], "format": "date-time" }
+          },
+          "additionalProperties": true
+        },
+        "source_of_authority": { "type": "string" },
+        "methodology": { "type": "string", "description": "human-readable statement of the exact deterministic determination function" },
+        "methodology_hash": { "type": "string", "description": "sha256:<hex> of the pinned methodology — re-computable by any party" }
+      },
+      "additionalProperties": true
+    },
+    "observation": {
+      "type": "object",
+      "description": "What the authoritative source actually reported. source_url is re-fetchable by anyone; raw_reading_hash is sha256 of the exact upstream payload so a third party can confirm the reading was not altered.",
+      "required": ["measured_value", "source", "source_url", "raw_reading_hash"],
+      "properties": {
+        "measured_value": {},
+        "unit": { "type": ["string", "null"] },
+        "observed_at_utc": { "type": ["string", "null"] },
+        "event_id": { "type": ["string", "null"], "description": "the source's own event id, when applicable" },
+        "station_or_grid_ref": { "type": ["string", "null"] },
+        "source": { "type": "string" },
+        "source_url": { "type": "string", "description": "exact, key-free, re-fetchable upstream URL" },
+        "raw_reading_hash": { "type": "string", "description": "sha256:<hex> of the canonical source reading (see hash_method)" },
+        "hash_method": { "type": "string", "description": "the exact, reproducible recipe to recompute raw_reading_hash from source_url" },
+        "volatile_fields_removed": { "type": "array", "items": { "type": "string" }, "description": "per-request fields stripped before hashing (e.g. generationtime_ms) so the hash is reproducible" }
+      },
+      "additionalProperties": true
+    },
+    "determination": {
+      "type": "object",
+      "description": "Deterministic result of applying the pinned methodology to the observation — re-computable by any party. Dynamic Feed executes a pre-agreed function and signs the result; it exercises no judgement.",
+      "required": ["triggered", "payout_factor"],
+      "properties": {
+        "triggered": { "type": "boolean" },
+        "payout_factor": { "type": "number", "description": "0.0–1.0; binary or stepped per the pinned methodology" },
+        "rationale": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "freshness": { "type": "object" },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "canonicalization", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "canonicalization": { "const": "json-sorted-compact" },
+        "sig": { "type": "string" },
+        "ephemeral_key": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

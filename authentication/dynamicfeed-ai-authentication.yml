@@ -1,0 +1,101 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/docs and /connect (access-policy table), https://dynamicfeed.ai/llms.txt, https://dynamicfeed.ai/v1
+  (keyless flags per route), https://dynamicfeed.ai/dashboard, live 401/402 responses observed 2026-09-19; openapi/_original/dynamicfeed-ai-openapi.json
+  declares NO securitySchemes (derive-authentication.py found nothing to derive), so this profile is searched, not
+  derived.
+docs: https://dynamicfeed.ai/docs
+summary: 'Three access modes on one host, none of them OAuth: (1) keyless — the MCP endpoint, POST /v1/batch and
+  the /v1 robot/ground-truth/notary/anchor routes need no credential at all; (2) a static X-API-Key header, issued
+  instantly by POST /signup with no card, required for per-user state (watchlist, webhooks, /v1/me), the direct
+  per-feed GET routes and /status; (3) x402 payment — /v1/pro/* return HTTP 402 with a USDC-on-Base quote and are
+  unlocked by an X-PAYMENT header from an x402 client, no account. The OpenAPI models the key as an optional `x-api-key`
+  header parameter on 60 operations (alongside x-rapidapi-proxy-secret / x-rapidapi-user for the RapidAPI marketplace
+  channel) rather than as a securityScheme.'
+schemes:
+- id: keyless
+  type: none
+  applies_to:
+  - https://dynamicfeed.ai/mcp (all 94 tools)
+  - https://dynamicfeed.ai/sse
+  - POST /v1/batch
+  - POST /v1/awareness, /v1/preflight, /v1/road, /v1/humanoid, /v1/marine
+  - POST /v1/anchor, /v1/guard, /v1/drift; GET/POST /v1/explain; GET /v1/sources, /v1/snapshot, /v1/stream, /v1/discover,
+    /v1/bundles, /v1/facts
+  - GET /v1/notary/log*, /v1/checkpoints*, /v1/witness/sample and the other */sample routes
+  - GET /.well-known/keys, /.well-known/signing-key-registry.json
+  policy: fair-use; "No per-key quota; subject to service availability" (MCP), max 20 calls per batch request
+  verified: probed — anonymous MCP tools/list and POST /v1/batch both returned 200 on 2026-09-19
+- id: api-key
+  type: apiKey
+  in: header
+  name: X-API-Key
+  issuance:
+    operation: signup_signup_post
+    endpoint: POST https://dynamicfeed.ai/signup
+    body: '{"email": "<optional, for receipts>"}'
+    returns: api_key
+    cost: free, no card
+    human_ui: https://dynamicfeed.ai/dashboard (stores the key in browser localStorage)
+  key_prefix_observed: amd_ (dashboard placeholder)
+  introspection: GET /v1/me -> plan, calls used today, daily quota, remaining
+  applies_to:
+  - GET /v1/me
+  - GET/POST/DELETE /v1/watchlist
+  - GET/POST/DELETE /v1/webhooks, POST /v1/webhooks/test
+  - POST /v1/witness, /v1/inference-receipt, /v1/robot-receipt, /v1/eval-receipt, /v1/proxy-witness, /v1/station/register,
+    /v1/station/reading
+  - GET /status, /whats-new and the direct per-feed GET routes (/earthquakes, /weather, /models …)
+  - GET /v1/asof (paid key only; free key gets a 402 upgrade pointer)
+  failure:
+    status: 401
+    body: '{"detail":"Missing API key. Get a free one at POST /signup, then send it as the ''X-API-Key'' header."}'
+    observed: GET https://dynamicfeed.ai/status and GET /earthquakes on 2026-09-19
+  optional_on_mcp: Sending the key on MCP calls only attributes usage; the default is keyless.
+  rotation: No revoke/rotate operation published; the Terms reserve the provider's right to revoke.
+  verified: probed (401 shape) + searched
+- id: x402
+  type: payment
+  protocol: x402 (x402Version 1)
+  header: X-PAYMENT (request) / X-PAYMENT-RESPONSE (settlement proof on the response)
+  network: base
+  asset: USDC 0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+  pay_to: '0xb525F2c54Ae0c3B3466206694726f85C7Cf7b985'
+  price: 0.001 USDC per call
+  applies_to:
+  - POST /v1/pro/batch
+  - POST /v1/pro/tool/{tool}
+  - POST /v1/pro/asof
+  challenge:
+    status: 402
+    body: x402Version, error, accepts[] {scheme exact, network, maxAmountRequired, resource, payTo, asset, maxTimeoutSeconds
+      120, outputSchema}, extensions.bazaar
+    observed: POST https://dynamicfeed.ai/v1/pro/tool/current_time on 2026-09-19
+  facilitators:
+  - https://api.cdp.coinbase.com/platform/v2/x402
+  - https://facilitator.payai.network
+  - https://facilitator.mogami.tech
+  - https://dexter.cash/facilitator
+  docs: https://dynamicfeed.ai/x402
+  verified: probed (402 quote); no payment was made
+- id: rapidapi-proxy
+  type: apiKey
+  in: header
+  name: x-rapidapi-proxy-secret / x-rapidapi-user
+  applies_to: the same 60 keyed operations, when called through the RapidAPI marketplace listing
+  note: Declared as optional header parameters in the OpenAPI; the marketplace injects them. Not a credential a
+    direct caller uses.
+  verified: derived from the contract
+oauth2:
+  supported: false
+  evidence: /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource and /.well-known/openid-configuration
+    all return 404; no securitySchemes in the contract.
+response_signing:
+  note: 'Authentication of the SERVER to the client is the stronger half of this profile: every response is Ed25519-signed
+    (DF-VERIFY/1) and the agent card carries a JWS. See conventions/dynamicfeed-ai-conventions.yml response_envelope
+    and json-schema/.'
+gaps:
+- No securitySchemes in the OpenAPI, so generated clients see every route as anonymous.
+- No key rotation or revocation endpoint.
+- No scoped or restricted keys; one key grants all per-user routes.
+- No OAuth/OIDC, so no delegated identity path for agents acting on behalf of a user.

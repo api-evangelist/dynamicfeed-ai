@@ -1,0 +1,119 @@
+generated: '2026-09-19'
+method: probed
+source: 'Live GET probes of every listed path on dynamicfeed.ai on 2026-09-19. Every row is a request that was actually
+  issued and every status is the one returned. Only one host exists: www.dynamicfeed.ai, api.dynamicfeed.ai, docs.dynamicfeed.ai,
+  app.dynamicfeed.ai and mcp.dynamicfeed.ai do NOT resolve (curl error 6), and the OpenAPI servers[], the MCP endpoint,
+  the A2A endpoint and the docs all live on the apex.'
+summary:
+  hosts_probed: 1
+  hosts_unresolvable:
+  - www.dynamicfeed.ai
+  - api.dynamicfeed.ai
+  - docs.dynamicfeed.ai
+  - app.dynamicfeed.ai
+  - mcp.dynamicfeed.ai
+  paths_probed: 21
+  documents_served: 11
+  note: 'Dynamic Feed serves an unusually rich agent-discovery surface from one host: RFC 9116 security.txt, an
+    A2A agent card at both the canonical and legacy paths, an OpenAI ai-plugin manifest, an MCP server card at two
+    paths, an ARD ai-catalog, its Ed25519 key map, a signing-key lifecycle registry, a JWKS and a DF-VERIFY profile
+    index. What it does NOT serve is any OAuth/OIDC metadata (RFC 8414, RFC 9728, OIDC discovery all 404) — consistent
+    with a keyless + X-API-Key model that has no authorization server — and no RFC 9727 api-catalog or apis.json.
+    The 404s are real JSON 404s ({"detail":"Not Found"}), not SPA shells, so every 200 above is a genuine document.'
+hosts:
+- host: dynamicfeed.ai
+  role: 'Apex: website, docs, REST base, MCP endpoint, A2A endpoint'
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/plain; charset=utf-8
+    file: dynamicfeed-ai-security.txt
+    standard: RFC 9116
+    note: Contact hello@dynamicfeed.ai, Expires 2027-06-03, Canonical set, Policy points at /terms (a ToS, not a
+      disclosure policy). Also served at the legacy /security.txt.
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/dynamicfeed-ai-agent-card.json
+    standard: A2A Agent Card 1.0
+    note: Graded conformant; see a2a/dynamicfeed-ai-a2a.yml.
+  - path: /.well-known/agent.json
+    status: 200
+    content_type: application/json
+    file: ../a2a/dynamicfeed-ai-agent-card.json
+    standard: A2A Agent Card (legacy path)
+    note: Byte-identical to agent-card.json.
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-ai-plugin.json
+    standard: OpenAI plugin manifest v1
+    note: auth.type none; api.url names the second OpenAPI https://dynamicfeed.ai/openapi-agent-public.json; served_by
+      block names the MCP endpoint; Ed25519-signed.
+  - path: /.well-known/mcp.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-mcp.json
+    standard: MCP server card (dynamic-feed-mcp-server-card/1)
+    note: serverInfo 0.8.0, authentication.required false, endpoints streamable_http + sse, full 94-tool list with
+      inputSchema, product_registry revision 2026-07-19.1.
+  - path: /.well-known/mcp/server-card.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-mcp-server-card.json
+    standard: MCP server card
+    note: Same document as /.well-known/mcp.json (75,412 bytes both); the path the ARD catalog points at.
+  - path: /.well-known/ai-catalog.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-ai-catalog.json
+    standard: ARD / AIR capability catalog specVersion 1.0
+    note: Declares the MCP server card, the A2A card and the OpenAPI with a trustManifest (Ed25519 keys, RFC 3161
+      timestamping, verifier package names).
+  - path: /.well-known/keys
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-keys.json
+    standard: provider-specific (DF-VERIFY/1 active key map)
+    note: key_id -> base64 Ed25519 public key; only the active key df-ed25519-6ca0de29113b.
+  - path: /.well-known/signing-key-registry.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-signing-key-registry.json
+    standard: provider-specific (df-signing-key-registry/v1)
+    note: 'Lifecycle registry revision 1: former key df-ed25519-4cb32e72f333 marked compromised (retired 2026-07-11T09:49:41Z),
+      active key from the same instant.'
+  - path: /.well-known/jwks.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-jwks.json
+    standard: RFC 7517 JWK Set
+    note: One EC P-256 key, kid dynamicfeed-agntcy-cosign-1 (an AGNTCY co-signing key, distinct from the Ed25519
+      data-signing keys).
+  - path: /.well-known/df-verify.json
+    status: 200
+    content_type: application/json
+    file: dynamicfeed-ai-df-verify.json
+    standard: provider-specific (DF-VERIFY/1 profile index)
+    note: Names the standard page, canonicalization, key endpoints, receipt schema profiles, verifier packages,
+      the x402 payment endpoints and A2UI cards.
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/did.json
+    status: 404
+  - path: /.well-known/apis.json
+    status: 404
+  - path: /.well-known/agent-skills/index.json
+    status: 404
+  - path: /.well-known/llms.txt
+    status: 404
+  - path: /apis.json
+    status: 404
+  - path: /humans.txt
+    status: 404

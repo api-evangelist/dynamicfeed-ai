@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/delivery-receipt-v1.json",
+  "title": "DF-VERIFY/1 — delivery-receipt/v1 (proof of delivery for agent commerce)",
+  "description": "A signed, timestamped PROOF-OF-DELIVERY for an x402 pay-per-call purchase: cryptographic evidence of WHAT a paid call returned (result_sha256) and WHEN. It is the fulfillment half of an autonomous agent transaction and is designed to complement Google's Agent Payments Protocol (AP2): an AP2 Payment/Checkout Mandate proves the agent was AUTHORIZED to pay; this delivery-receipt proves what the merchant actually delivered. Same tamper-evident, cryptographically-signed verifiable-credential model, on the seller/fulfillment side. The detached Ed25519 signature covers the whole object except its `signature` field, canonicalized json-sorted-compact (see https://dynamicfeed.ai/standard). Zero-PII: the payer wallet is hashed, never stored raw.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "resource", "result_sha256", "settlement", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "delivery-receipt/v1" },
+    "type": { "type": "array", "items": { "type": "string" }, "description": "verifiable-credential type tags, e.g. [\"VerifiableCredential\", \"DeliveryReceipt\"]" },
+    "profile": { "const": "x402/ap2-fulfillment", "description": "the fulfillment profile this credential implements" },
+    "proves": { "const": "delivery", "description": "this credential proves DELIVERY/fulfillment, not payment authorization" },
+    "issuer": { "type": "string", "description": "domain of the signing merchant/issuer, e.g. dynamicfeed.ai" },
+    "issued_at": { "type": "string", "format": "date-time", "description": "the moment delivery was recorded" },
+    "resource": { "type": "string", "description": "the paid endpoint that was delivered" },
+    "args_sha256": { "type": "string", "description": "sha256 of the canonicalized request args (what was asked for)" },
+    "result_sha256": { "type": ["string", "null"], "description": "sha256 of the canonicalized delivered result (what was returned) — binds the exact bytes delivered" },
+    "price": {
+      "type": "object",
+      "properties": {
+        "atomic": { "type": "string" },
+        "asset": { "type": "string" },
+        "network": { "type": "string" }
+      }
+    },
+    "settlement": {
+      "type": "object",
+      "description": "on-chain settlement facts (the merchant never custodies funds — the x402 facilitator settles)",
+      "properties": {
+        "transaction": { "type": ["string", "null"] },
+        "network": { "type": "string" },
+        "facilitator": { "type": ["string", "null"] },
+        "payer_sha256": { "type": ["string", "null"], "description": "sha256 of the payer wallet (zero-PII; never the raw address)" }
+      }
+    },
+    "note": { "type": "string" },
+    "verify": { "type": "string", "description": "where to fetch the public key to verify the signature" },
+    "schema_url": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "canonicalization", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "canonicalization": { "const": "json-sorted-compact" },
+        "sig": { "type": "string", "description": "base64url-encoded 64-byte Ed25519 signature" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

@@ -1,0 +1,173 @@
+generated: '2026-09-19'
+method: probed
+source: https://dynamicfeed.ai/.well-known/agent-card.json
+card:
+  file: a2a/dynamicfeed-ai-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: dynamicfeed.ai
+  note: 'The card is served from the apex host, which is also the OpenAPI servers[] host, the MCP host and the A2A
+    JSON-RPC host (https://dynamicfeed.ai/a2a). The legacy /.well-known/agent.json path returns a byte-identical
+    copy (5,233 bytes, same JWS signature). GET https://dynamicfeed.ai/a2a also answers 200 with the same card.
+    Ownership is not in question: provider.organization is "Dynamic Feed", provider.url is https://dynamicfeed.ai,
+    and the card is JWS-signed with the same key_id (df-ed25519-6ca0de29113b) that signs every REST and MCP response.
+    No www., api., docs. or mcp. subdomain resolves in DNS, so there is exactly one host to probe.'
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://dynamicfeed.ai/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json
+  body_bytes: 5233
+  body_parses_as: JSON object with AgentCard shape (protocolVersion, name, url, version, capabilities, skills all
+    present)
+  corroborating_probes:
+  - url: https://dynamicfeed.ai/.well-known/agent.json
+    http_status: 200
+    note: Byte-identical to the canonical card.
+  - url: https://dynamicfeed.ai/a2a
+    http_status: 200
+    note: GET on the declared JSON-RPC URL returns the card; the interface accepts A2A message/send POSTs per /v1/onboard.
+  - url: https://dynamicfeed.ai/.well-known/ai-catalog.json
+    http_status: 200
+    note: The ARD catalog independently lists the agent card and the MCP server card.
+  - url: https://dynamicfeed.ai/.well-known/oauth-protected-resource
+    http_status: 404
+  - url: https://dynamicfeed.ai/.well-known/oauth-authorization-server
+    http_status: 404
+agent_card:
+  name: Dynamic Feed
+  description: 'The verifiable live-data agent. Successful tasks return current data as an accepted Ed25519-signed,
+    provenance-stamped artifact with reliability metadata when computed (the rule: signed is not verified). Keyless
+    fair-use. A neutral witness, never the money path.'
+  version: 1.0.0
+  url: https://dynamicfeed.ai/a2a
+  preferred_transport: JSONRPC
+  documentation_url: https://dynamicfeed.ai/llms.txt
+  icon_url: https://dynamicfeed.ai/logo.png
+  provider:
+    organization: Dynamic Feed
+    url: https://dynamicfeed.ai
+  capabilities:
+    streaming: false
+    push_notifications: false
+    state_transition_history: false
+    extensions:
+    - https://dynamicfeed.ai/a2a/ext/provenance/v1
+    - https://dynamicfeed.ai/a2a/ext/ground-truth/v1
+  default_input_modes:
+  - application/json
+  - text/plain
+  default_output_modes:
+  - application/json
+  - text/plain
+  security_schemes: null
+  skill_count: 8
+  skills:
+  - id: live-weather
+    name: Live weather & air quality
+    tags:
+    - weather
+    - forecast
+    - air-quality
+    - environment
+  - id: natural-hazards
+    name: Natural hazards
+    tags:
+    - earthquakes
+    - wildfires
+    - floods
+    - hazards
+    - alerts
+  - id: macro-economics
+    name: Macro & rates
+    tags:
+    - economy
+    - inflation
+    - rates
+    - macro
+  - id: security-intel
+    name: Security & vulnerabilities
+    tags:
+    - cve
+    - security
+    - vulnerabilities
+    - devsecops
+  - id: compliance-screening
+    name: Risk & compliance
+    tags:
+    - sanctions
+    - compliance
+    - government
+    - recalls
+  - id: space-orbital
+    name: Space & orbit
+    tags:
+    - satellites
+    - space-weather
+    - launches
+    - orbit
+  - id: verifiable-facts
+    name: Verifiable facts (signed + graded)
+    tags:
+    - provenance
+    - reliability
+    - signed
+    - verifiable
+    - ground-truth
+  - id: robot-awareness
+    name: Robot situational awareness
+    tags:
+    - robotics
+    - awareness
+    - verdict
+    - embodied-ai
+  signatures:
+    present: true
+    count: 1
+    protected_header: '{"alg":"EdDSA","kid":"df-ed25519-6ca0de29113b","typ":"JOSE"}'
+    note: JWS detached signature over the card. kid matches the active key in /.well-known/signing-key-registry.json
+      (registry revision 1, active from 2026-07-11).
+conformance:
+  spec: A2A 1.0.0
+  grade: conformant
+  protocol_version: '1.0'
+  preferred_transport: JSONRPC
+  hard_checks:
+    capabilities_is_object: true
+    protocol_version_present: true
+    skills_is_array: true
+  optional_fields:
+    default_input_modes: true
+    default_output_modes: true
+    preferred_transport: true
+  grade_basis: 'All three hard checks pass: capabilities is an OBJECT carrying streaming, pushNotifications, stateTransitionHistory
+    and an extensions[] array; protocolVersion "1.0" is present at the top level; skills is an ARRAY of eight fully-populated
+    skills, each with id, name, description, tags, examples, inputModes and outputModes. All three optional discriminators
+    are present (preferredTransport, defaultInputModes, defaultOutputModes), so the card grades conformant rather
+    than near-conformant.'
+  deviations:
+  - field: url / preferredTransport / protocolVersion
+    observed: declared as the 0.3-era top-level triple; no supportedInterfaces[] array
+    note: A2A 1.0.0 moved the interface declaration into supportedInterfaces[].protocolBinding. The card still passes
+      every hard check because protocolVersion IS present at the top level, but a strict 1.0 reader looking only
+      at supportedInterfaces[] finds no interface. Both shapes coexist in the wild; recorded for interoperability,
+      not as a spec failure.
+  - field: securitySchemes / security
+    observed: absent
+    note: 'Consistent with the provider: every A2A skill is keyless fair-use. There is no auth scheme to declare
+      and none is declared.'
+  - field: capabilities.extensions[1] (ground-truth/v1)
+    observed: declared with description "SECURITY QUARANTINE ... POST /v1/vc returns 503"
+    note: 'The card advertises an extension whose backing endpoint is disabled. It is honest (required: false, and
+      the description says so) but an agent that reads only the uri list will discover a dead capability.'
+  - field: skills[].examples
+    observed: JSON strings shaped {"tool":..., "args":...}
+    note: Examples are MCP-style tool invocations serialized as strings, which tells an agent that the A2A surface
+      dispatches to the same 94-tool registry as /mcp and /v1/batch rather than exposing A2A-native task types.
+surface_relationship:
+  note: 'Dynamic Feed exposes ONE tool registry over three agent surfaces on one host: A2A JSON-RPC at https://dynamicfeed.ai/a2a
+    (8 skills that group the tools), MCP Streamable HTTP at https://dynamicfeed.ai/mcp (94 tools, keyless, live
+    tools/list succeeded), and REST at https://dynamicfeed.ai (158 operations; POST /v1/batch dispatches any tool
+    by name). The A2A skills are groupings of MCP tool names, so the crosswalk in mcp/dynamicfeed-ai-tool-crosswalk.yml
+    covers all three.'

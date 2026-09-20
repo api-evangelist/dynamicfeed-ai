@@ -1,0 +1,118 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://dynamicfeed.ai/privacy (last updated 31 May 2026), https://dynamicfeed.ai/trust, https://dynamicfeed.ai/security/advisories,
+  https://dynamicfeed.ai/terms, https://dynamicfeed.ai/about, and conventional-path probes on dynamicfeed.ai 2026-09-19
+signals:
+  subprocessors:
+    present: true
+    url: https://dynamicfeed.ai/privacy
+    status: 200
+    section: 4. Service providers (sub-processors)
+    named:
+    - vendor: Stripe
+      purpose: payment processing
+    - vendor: Supabase
+      purpose: database hosting
+    - vendor: Railway
+      purpose: application hosting
+    - vendor: Cloudflare
+      purpose: DNS and network/security
+    - vendor: Resend
+      purpose: transactional & operational email
+    dated: 2026-05-31 (policy last-updated date; no per-row dates)
+    standalone_page: false
+    change_notification: null
+    note: A named vendor-plus-purpose list carried inside the privacy policy rather than a standalone subprocessor
+      page; /legal/subprocessors 404s. Recorded because the substance (who processes what) is published, with the
+      caveat that there is no change-notification mechanism or DPA.
+  data_subject_request:
+    present: true
+    url: https://dynamicfeed.ai/privacy
+    status: 200
+    section: 6. Your rights
+    regimes_named:
+    - GDPR (EU/UK)
+    - CCPA (California)
+    - Privacy Act (Australia)
+    rights_named:
+    - access
+    - correct
+    - delete
+    - object to certain processing
+    channel: contact us using the details below (email)
+    portal: false
+    sla_stated: null
+    note: A statement of rights and an email route, not a request portal or a stated response period. /privacy/requests
+      404s.
+note: 'Two horizontal signals are published, both inside the privacy policy. Everything else is absent or explicitly
+  disclaimed: the Trust Center states "SOC 2 and a signed DPA are pursued against a signed enterprise requirement,
+  not claimed speculatively" and "SSO / SAML and role-based access are not live yet", so no compliance certification
+  exists to record. The company is Australian (Fluxdyne Pty Ltd, /about) and hosts on Railway behind Cloudflare,
+  but publishes no data-residency statement; an inferred region is not a commitment.'
+probed_absent:
+- signal: sbom
+  urls:
+  - url: https://dynamicfeed.ai/security/sbom
+    status: 404
+  note: Never derived — search only. The security advisory names crate SHA-256 digests and reviewed commits for
+    its verifiers, which is release provenance, not a bill of materials.
+- signal: accessibility_conformance
+  urls:
+  - url: https://dynamicfeed.ai/accessibility
+    status: 404
+  - url: https://dynamicfeed.ai/accessibility/vpat
+    status: 404
+- signal: data_residency
+  urls:
+  - url: https://dynamicfeed.ai/docs/data-residency
+    status: 404
+  note: Privacy policy names Railway (hosting) and Supabase (database) without regions.
+- signal: incident_notification
+  urls:
+  - url: https://dynamicfeed.ai/legal/dpa
+    status: 404
+  - url: https://dynamicfeed.ai/security/advisories
+    status: 200
+  note: The advisories page is a public incident disclosure (DF-SA-2026-001, same-day publication) but no notification
+    SLA or commitment to notify customers is stated; a DPA is "on request".
+- signal: transparency_report
+  urls:
+  - url: https://dynamicfeed.ai/transparency
+    status: 404
+  note: The append-only "transparency log" at /v1/notary/log is a cryptographic log of receipts, not a legal-requests
+    transparency report.
+- signal: ai_transparency
+  urls:
+  - url: https://dynamicfeed.ai/ai/transparency
+    status: 404
+- signal: training_data_summary
+  urls:
+  - url: https://dynamicfeed.ai/ai/transparency
+    status: 404
+  note: The provider publishes an open dataset (CC-BY-4.0, /dataset) FOR training but does not itself train a model.
+- signal: notice_and_action
+  urls:
+  - url: https://dynamicfeed.ai/legal/report-content
+    status: 404
+- signal: global_privacy_control
+  urls:
+  - url: https://dynamicfeed.ai/privacy
+    status: 200
+  note: The policy states "We do not use advertising or tracking cookies" but makes no GPC statement; honored is
+    not set from a header probe.
+- signal: support_lifetime
+  urls:
+  - url: https://dynamicfeed.ai/terms
+    status: 200
+  note: '"Features and data may change or be discontinued at any time" — a disclaimer, not a support period.'
+- signal: exit_assistance
+  urls:
+  - url: https://dynamicfeed.ai/terms
+    status: 200
+  note: Aggregated dataset offered under CC-BY-4.0 and per-user data deletion on request, but no export/switching
+    commitment is stated.
+- signal: age_assurance
+  urls:
+  - url: https://dynamicfeed.ai/terms
+    status: 200

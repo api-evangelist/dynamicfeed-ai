@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dynamicfeed.ai/schemas/eval-receipt-v1.json",
+  "title": "Dynamic Feed eval-receipt/v1",
+  "description": "A neutral third-party WITNESS receipt for a single AI evaluation run. The 'Verified Eval' stamp for the contamination-proof-benchmark era. A profile of receipt/v1: the same flat, detached-Ed25519-signed envelope, so /verify.js and scripts/verify_awareness.py verify it unchanged. The lab commits its test set as a salted sha256 BEFORE the run (set_commitment), so the set stays PRIVATE while the run becomes un-retunable after the fact, solving the evaluator's dilemma of having to expose a private set to be trusted. The receipt records that model_id scored `score` on eval_name (metric, n items) against the committed set, at a point in time, Ed25519-signed and independently time-stamped by an independent RFC 3161 authority. ADVISORY EVIDENCE ONLY: Dynamic Feed does NOT re-run or independently verify the score, and does NOT certify the benchmark is fair, representative, or contamination-free. It witnesses the committed run so no party (including the model vendor) can alter or retune it retroactively. Provenance is not truth.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "data", "signature"],
+  "properties": {
+    "schema": {"const": "eval-receipt/v1"},
+    "issuer": {"type": "string", "const": "dynamicfeed.ai", "description": "The witness. Verify its key at GET /.well-known/keys."},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "data": {
+      "type": "object",
+      "required": ["content_hash", "mode", "eval_name", "model_id", "metric", "score", "set_commitment", "witnessed_at", "claim_boundary"],
+      "properties": {
+        "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "sha256 of the canonical eval record (eval_name, model_id, metric, score, n, set_commitment, run_sha256, harness)."},
+        "mode": {"type": "string", "enum": ["eval", "eval (sample)"]},
+        "eval_name": {"type": "string", "description": "The benchmark / evaluation name (e.g. 'deepswe', 'gpqa-diamond'). Caller-supplied, non-PII."},
+        "model_id": {"type": "string", "description": "The model (or model+harness) that was evaluated. Caller-supplied; Dynamic Feed does not verify which model ran."},
+        "metric": {"type": "string", "description": "The scoring metric (e.g. 'pass@1', 'accuracy', 'full-recall'). Caller-supplied."},
+        "score": {"type": "number", "description": "The score the lab computed. Caller-supplied; Dynamic Feed does NOT re-run or verify it."},
+        "n": {"type": ["integer", "null"], "description": "Number of items / tasks evaluated. Caller-supplied."},
+        "set_commitment": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "A salted sha256 commitment to the sealed test set, computed by the lab BEFORE the run. Lets the set stay private while making the run un-retunable after the fact. The raw set is never sent to Dynamic Feed."},
+        "run_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$", "description": "Optional sha256 of the full run transcript / results, so the run itself is tamper-evident. The transcript is never sent to Dynamic Feed."},
+        "harness": {"type": ["string", "null"], "description": "Optional agent harness used (e.g. 'mini-swe-agent'). Caller-supplied, non-PII."},
+        "witnessed_at": {"type": "string", "format": "date-time"},
+        "window": {
+          "type": "object",
+          "description": "Two-sided time bound. The lower-bound object holds a recent independent reference value committed inside the signed record, giving the NOT-BEFORE lower bound; an RFC 3161 timestamp from an independent authority (POST /v1/anchor) gives the EXISTED-BY upper bound. Together they give a provable run-time window no single party controls.",
+          "properties": {
+            "btc_lower": {
+              "type": "object",
+              "properties": {
+                "block_hash": {"type": "string"},
+                "height": {"type": "integer"},
+                "block_time": {"type": ["string", "null"]}
+              }
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "description": "Optional BYO-key lab/agent co-signature, verified BEFORE witnessing ('the lab attested, Dynamic Feed witnessed').",
+          "properties": {
+            "pubkey_b64": {"type": "string"},
+            "signature_b64": {"type": "string"},
+            "context_bound": {"type": "boolean"},
+            "signature_valid": {"const": true}
+          }
+        },
+        "claim_boundary": {"type": "string", "description": "The advisory-evidence, witness-only boundary, baked into the signed bytes so no log can strip it."}
+      }
+    },
+    "transparency": {
+      "type": "object",
+      "description": "Linkage into the public append-only notary transparency log (GET /v1/notary/log); the log head is RFC 3161 timestamped daily by an independent authority.",
+      "properties": {
+        "log_index": {"type": "integer"},
+        "prev_hash": {"type": "string"},
+        "entry_hash": {"type": "string"},
+        "entry_url": {"type": "string"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "sig"],
+      "description": "Detached Ed25519 signature over the canonical bytes of this envelope with the `signature` field removed (json-sorted-compact). Verify against GET /.well-known/keys.",
+      "properties": {
+        "alg": {"const": "Ed25519"},
+        "key_id": {"type": "string"},
+        "canonicalization": {"const": "json-sorted-compact"},
+        "sig": {"type": "string", "description": "base64url-encoded Ed25519 signature"}
+      }
+    }
+  }
+}

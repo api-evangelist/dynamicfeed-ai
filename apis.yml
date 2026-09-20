@@ -1,23 +1,255 @@
 aid: dynamicfeed-ai
 name: Dynamic Feed
-description: 'Dynamic Feed is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Dynamic Feed, a product of Fluxdyne Pty Ltd (Australia), is a live-data and machine-evidence layer
+  for AI agents and robots: 94 read-only tools across 20 domains (weather and air quality, natural hazards, space
+  weather and satellite positions, CVEs and actively-exploited vulnerabilities, software versions and EOL, sanctions
+  and Federal Register, shipping, macro and rates, AI-model pricing and provider latency) drawn from named public
+  sources such as NASA, NOAA, USGS, CISA, OFAC and the World Bank plus its own measurements. Every response carries
+  a provenance and freshness envelope and a detached Ed25519 signature (DF-VERIFY/1) verifiable offline against
+  published keys. The same tool registry is served three ways from one host: a keyless MCP server at /mcp (Streamable
+  HTTP, protocol 2025-06-18), an A2A 1.0 agent at /a2a with a conformant signed agent card, and a REST API published
+  as OpenAPI 3.1 with a keyless 20-call batch endpoint. A /v1 surface adds robot go/caution/no-go awareness verdicts,
+  RFC 3161 anchoring, signed transaction/inference/robot/eval receipts on an append-only notary log with daily checkpoints,
+  per-key watchlists, HMAC-signed change webhooks and an SSE stream. Paid access is machine-native via x402 (HTTP
+  402, USDC on Base, 0.001 USDC per call).'
+image: https://dynamicfeed.ai/df-logo.png
 url: https://raw.githubusercontent.com/api-evangelist/dynamicfeed-ai/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:a2a-registry
-x-tier: stub
-x-tier-reason: harvest
+x-tier: enriched
+x-tier-reason: enriched 2026-09-19 (local-v3)
+x-parent-company: Fluxdyne Pty Ltd
 specificationVersion: '0.20'
 created: '2026-09-19'
 modified: '2026-09-19'
 tags:
-- Company
-apis: []
+- Live Data
+- AI Agents
+- MCP
+- A2A
+- agent-native
+- Provenance
+- Weather
+- Natural Hazards
+- Vulnerabilities
+- Sanctions
+- Space
+- Robotics
+- x402
+- Receipts
+- Notary
+- Australia
+apis:
+- aid: dynamicfeed-ai:dynamic-feed-rest-api
+  name: Dynamic Feed REST API
+  description: 'The full REST surface: 158 operations on https://dynamicfeed.ai — the keyless POST /v1/batch tool
+    dispatcher (up to 20 calls per request, each result Ed25519-signed with provenance and freshness), legacy per-feed
+    GET routes, the /v1 agent and robot surface (awareness verdicts, drift/guard ground-truth checks, receipts,
+    witness, notary log, checkpoints, RFC 3161 anchor, watchlist, webhooks, SSE stream), free-key signup and the
+    x402 pay-per-call /v1/pro endpoints. Published as OpenAPI 3.1.0 at /openapi.json with a second one-operation
+    public-agent spec at /openapi-agent-public.json.'
+  humanURL: https://dynamicfeed.ai/docs
+  baseURL: https://dynamicfeed.ai
+  tags:
+  - Live Data
+  - AI Agents
+  - Provenance
+  - Weather
+  - Natural Hazards
+  - Vulnerabilities
+  - Sanctions
+  - Space
+  - x402
+  - Receipts
+  properties:
+  - type: OpenAPI
+    url: openapi/dynamicfeed-ai-openapi.yml
+  - type: OpenAPI
+    url: https://dynamicfeed.ai/openapi.json
+  - type: OpenAPI
+    url: openapi/dynamicfeed-ai-agent-public-openapi.yml
+  - type: OpenAPI
+    url: https://dynamicfeed.ai/openapi-agent-public.json
+  - type: Documentation
+    url: https://dynamicfeed.ai/docs
+  - type: APIReference
+    url: https://dynamicfeed.ai/docs
+  - type: GettingStarted
+    url: https://dynamicfeed.ai/connect
+  - type: Overlay
+    url: overlays/dynamicfeed-ai-openapi-overlay.yaml
+  - type: JSONSchema
+    url: json-schema/dynamicfeed-ai-schemas-index.json
+  - type: JSONSchema
+    url: https://dynamicfeed.ai/schemas/index.json
+  - type: DataModel
+    url: data-model/dynamicfeed-ai-data-model.yml
+  - type: ErrorCatalog
+    url: errors/dynamicfeed-ai-problem-types.yml
+  - type: Conventions
+    url: conventions/dynamicfeed-ai-conventions.yml
+  - type: RateLimits
+    url: rate-limits/dynamicfeed-ai-rate-limits.yml
+  - type: Playground
+    url: https://dynamicfeed.ai/playground
+  - type: AgentSkill
+    url: skills/_index.yml
+  image: https://dynamicfeed.ai/df-logo.png
+- aid: dynamicfeed-ai:dynamic-feed-mcp-server
+  name: Dynamic Feed MCP Server
+  description: Hosted, keyless Model Context Protocol server at https://dynamicfeed.ai/mcp (Streamable HTTP with
+    legacy HTTP+SSE auto-detected; explicit SSE at /sse) exposing all 94 read-only live-data tools with real inputSchemas;
+    anonymous initialize and tools/list verified live (protocolVersion 2025-06-18, server 0.8.0). A first-party
+    stdio bridge ships as npm/PyPI dynamicfeed-mcp. Server card at /.well-known/mcp.json.
+  humanURL: https://dynamicfeed.ai/connect
+  baseURL: https://dynamicfeed.ai/mcp
+  tags:
+  - MCP
+  - AI Agents
+  - Live Data
+  - agent-native
+  properties:
+  - type: MCPServer
+    url: mcp/dynamicfeed-ai-mcp.yml
+  - type: MCPServer
+    url: https://dynamicfeed.ai/mcp
+  - type: ToolCrosswalk
+    url: mcp/dynamicfeed-ai-tool-crosswalk.yml
+  - type: Documentation
+    url: https://dynamicfeed.ai/connect
+  - type: MCPServerCard
+    url: https://dynamicfeed.ai/.well-known/mcp.json
+  image: https://dynamicfeed.ai/df-logo.png
+- aid: dynamicfeed-ai:dynamic-feed-a2a-agent
+  name: Dynamic Feed A2A Agent
+  description: A2A 1.0 JSON-RPC agent at https://dynamicfeed.ai/a2a with a JWS-signed agent card (graded conformant)
+    declaring eight keyless skills — live weather, natural hazards, macro and rates, security intel, compliance
+    screening, space and orbit, verifiable facts, robot awareness — each grouping tools from the same 94-tool registry
+    the MCP server exposes. A provenance extension URI marks every result artifact as Ed25519-signed.
+  humanURL: https://dynamicfeed.ai/agents
+  baseURL: https://dynamicfeed.ai/a2a
+  tags:
+  - A2A
+  - AI Agents
+  - agent-native
+  - Provenance
+  properties:
+  - type: AgentCard
+    url: a2a/dynamicfeed-ai-a2a.yml
+  - type: AgentCard
+    url: https://dynamicfeed.ai/.well-known/agent-card.json
+  - type: Documentation
+    url: https://dynamicfeed.ai/llms.txt
+  image: https://dynamicfeed.ai/df-logo.png
+- aid: dynamicfeed-ai:dynamic-feed-webhooks-and-stream
+  name: Dynamic Feed Webhooks and Live Stream
+  description: Push-on-change webhooks registered per key at POST /v1/webhooks (SSRF-validated URL, one-time secret,
+    HMAC-SHA256 X-DynamicFeed-Signature on every delivery) and a keyless Server-Sent Events stream at GET /v1/stream
+    that pushes a tool's live value every 5-300 seconds for up to 60 updates. No AsyncAPI is published; the surface
+    is documented in prose and operation descriptions.
+  humanURL: https://dynamicfeed.ai/llms.txt
+  baseURL: https://dynamicfeed.ai
+  tags:
+  - Webhook
+  - Server-Sent Events
+  - Live Data
+  - Notifications
+  properties:
+  - type: Webhooks
+    url: asyncapi/dynamicfeed-ai-webhooks.yml
+  - type: Documentation
+    url: https://dynamicfeed.ai/llms.txt
+  image: https://dynamicfeed.ai/df-logo.png
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: TrustCenter
+  url: security/dynamicfeed-ai-trust-center.yml
+- type: VulnerabilityDisclosure
+  url: security/dynamicfeed-ai-vulnerability-disclosure.yml
+- type: DomainSecurity
+  url: security/dynamicfeed-ai-domain-security.yml
 - type: Website
   url: https://dynamicfeed.ai/
+- type: Documentation
+  url: https://dynamicfeed.ai/docs
+- type: APIReference
+  url: https://dynamicfeed.ai/docs
+- type: DeveloperPortal
+  url: https://dynamicfeed.ai/connect
+- type: GettingStarted
+  url: https://dynamicfeed.ai/connect
+- type: Playground
+  url: https://dynamicfeed.ai/playground
+- type: Console
+  url: https://dynamicfeed.ai/dashboard
+- type: SignUp
+  url: https://dynamicfeed.ai/dashboard
+- type: Pricing
+  url: https://dynamicfeed.ai/pricing
+- type: TermsOfService
+  url: https://dynamicfeed.ai/terms
+- type: PrivacyPolicy
+  url: https://dynamicfeed.ai/privacy
+- type: StatusPage
+  url: https://dynamicfeed.ai/uptime
+- type: StatusPage
+  url: https://dynamicfeed.ai/status.json
+- type: GitHubOrganization
+  url: https://github.com/Fluxdyne
+- type: TrustCenter
+  url: https://dynamicfeed.ai/trust
+- type: SecurityAdvisories
+  url: https://dynamicfeed.ai/security/advisories
+- type: ParentCompany
+  url: https://fluxdyne.com
+- type: LLMsTxt
+  url: llms/dynamicfeed-ai-llms.txt
+- type: LLMsTxt
+  url: https://dynamicfeed.ai/llms.txt
+- type: WellKnown
+  url: well-known/dynamicfeed-ai-well-known.yml
+- type: SecurityTxt
+  url: well-known/dynamicfeed-ai-security.txt
+- type: SecurityTxt
+  url: https://dynamicfeed.ai/.well-known/security.txt
+- type: AICatalog
+  url: well-known/dynamicfeed-ai-ai-catalog.json
+- type: AIPlugin
+  url: well-known/dynamicfeed-ai-ai-plugin.json
+- type: Packages
+  url: packages/dynamicfeed-ai-packages.yml
+- type: SDKs
+  url: packages/dynamicfeed-ai-packages.yml
+- type: CLI
+  url: cli/dynamicfeed-ai-cli.yml
+- type: Conformance
+  url: conformance/dynamicfeed-ai-conformance.yml
+- type: Lifecycle
+  url: lifecycle/dynamicfeed-ai-lifecycle.yml
+- type: Plans
+  url: plans/dynamicfeed-ai-plans-pricing.yml
+- type: Components
+  url: components/dynamicfeed-ai-components.yml
+- type: Subprocessors
+  url: https://dynamicfeed.ai/privacy
+- type: DataSubjectRequest
+  url: https://dynamicfeed.ai/privacy
+- type: RegulatoryPosture
+  url: regulatory/dynamicfeed-ai-regulatory-posture.yml
+- type: OpenDataset
+  url: https://dynamicfeed.ai/dataset
+- type: X402
+  url: https://dynamicfeed.ai/v1/pro/catalog
+- type: Authentication
+  url: authentication/dynamicfeed-ai-authentication.yml
+- type: Security
+  url: security/dynamicfeed-ai-vulnerability-disclosure.yml
+x-enrichment:
+  date: '2026-09-19'
+  status: enriched
+  artifacts_added: 60
+  pass: local-v3

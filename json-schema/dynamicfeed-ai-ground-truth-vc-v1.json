@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/ground-truth-vc-v1.json",
+  "title": "DF-VERIFY/1 — GroundTruthReceipt Verifiable Credential profile",
+  "description": "DISABLED_SECURITY_QUARANTINE. This is a retained non-executable prototype schema. POST /v1/vc returns 503 because the legacy wrapper did not verify exact inner receipt bytes, active lifecycle, or claimant/signer/witness roles. Conformance to this shape does not establish authenticity, ground truth, or an approved Dynamic Feed credential.",
+  "deprecated": true,
+  "x-dynamicfeed-status": "disabled_security_quarantine",
+  "type": "object",
+  "required": ["@context", "type", "issuer", "validFrom", "credentialSubject", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "@context": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "MUST include https://www.w3.org/ns/credentials/v2 and https://dynamicfeed.ai/ns/ground-truth/v1"
+    },
+    "type": {
+      "type": "array",
+      "description": "MUST include VerifiableCredential and GroundTruthReceipt",
+      "contains": { "const": "GroundTruthReceipt" }
+    },
+    "issuer": { "const": "https://dynamicfeed.ai" },
+    "validFrom": { "type": "string", "format": "date-time" },
+    "credentialSubject": {
+      "type": "object",
+      "required": ["type", "receipt"],
+      "properties": {
+        "type": { "const": "GroundTruthReceipt" },
+        "id": { "type": "string" },
+        "receipt": { "type": "object", "description": "the inner Dynamic Feed signed receipt, verbatim, keeping its own signature" },
+        "bindsTo": {
+          "type": "object",
+          "description": "identifiers of the authorization this ground truth is bound to",
+          "properties": {
+            "ap2_mandate_id": { "type": "string" },
+            "a2a_interaction_id": { "type": "string" },
+            "a2a_task_id": { "type": "string" },
+            "ruflo_decision_id": { "type": "string" },
+            "ref": { "type": "string" }
+          }
+        }
+      }
+    },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "sig": { "type": "string" }
+      }
+    }
+  }
+}

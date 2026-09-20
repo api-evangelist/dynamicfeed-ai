@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dynamicfeed.ai/schemas/txn-receipt-v1.json",
+  "title": "Dynamic Feed txn-receipt/v1",
+  "description": "A neutral third-party WITNESS receipt for a machine-to-machine / agent-to-agent transaction. A profile of receipt/v1: the same flat, detached-Ed25519-signed envelope, so /verify.js and scripts/verify_awareness.py verify it unchanged. Dynamic Feed sits BESIDE the transaction and never in the value path. It signs and time-stamps a HASH of a record someone else gives it. The receipt proves the record EXISTED within a time window and is INTACT (tamper-evident), and which agent key (if any) co-signed; it does NOT prove the transaction was authorized, correct, lawful, completed, or that any value moved. Provenance is not truth.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "data", "signature"],
+  "properties": {
+    "schema": {"const": "txn-receipt/v1"},
+    "issuer": {"type": "string", "const": "dynamicfeed.ai", "description": "The witness. Verify its key at GET /.well-known/keys."},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "data": {
+      "type": "object",
+      "required": ["content_hash", "mode", "witnessed_at", "claim_boundary"],
+      "properties": {
+        "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "sha256 of the witnessed transaction record (the commitment). In hash-only mode the submitter computed it; Dynamic Feed witnessed the hash, not the bytes."},
+        "mode": {"type": "string", "enum": ["hash-only", "payload", "payload (sample)"]},
+        "parties": {"type": "array", "items": {"type": "string"}, "description": "Opaque party ids, NO PII. Self-declared by the caller."},
+        "txn_ref": {"type": ["string", "null"], "description": "Opaque transaction reference, caller-supplied."},
+        "witnessed_at": {"type": "string", "format": "date-time"},
+        "window": {
+          "type": "object",
+          "description": "Two-sided time bound. The lower-bound object holds a recent external time reference committed inside the signed record (the NOT-BEFORE bound); the notary log head is time-stamped by an independent RFC 3161 authority (POST /v1/anchor) for the EXISTED-BY upper bound. Together they give a provable creation window no single party controls.",
+          "properties": {
+            "btc_lower": {
+              "type": "object",
+              "properties": {
+                "block_hash": {"type": "string"},
+                "height": {"type": "integer"},
+                "block_time": {"type": ["string", "null"]}
+              }
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "description": "Optional BYO-key agent co-signature, verified BEFORE witnessing ('agent attested, Dynamic Feed witnessed').",
+          "properties": {
+            "pubkey_b64": {"type": "string"},
+            "signature_b64": {"type": "string"},
+            "signed_message": {"const": "ascii-hex content_hash"},
+            "signature_valid": {"const": true}
+          }
+        },
+        "claim_boundary": {"type": "string", "description": "The witness-only boundary, baked into the signed bytes so no log can strip it."}
+      }
+    },
+    "transparency": {
+      "type": "object",
+      "description": "Linkage into the public append-only notary hash-log (GET /v1/notary/log); the log head is independently time-stamped daily by an independent RFC 3161 authority.",
+      "properties": {
+        "log_index": {"type": "integer"},
+        "prev_hash": {"type": "string"},
+        "entry_hash": {"type": "string"},
+        "entry_url": {"type": "string"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "sig"],
+      "description": "Detached Ed25519 signature over the canonical bytes of this envelope with the `signature` field removed (json-sorted-compact: sort_keys, comma-colon separators, UTF-8). Verify against GET /.well-known/keys.",
+      "properties": {
+        "alg": {"const": "Ed25519"},
+        "key_id": {"type": "string"},
+        "canonicalization": {"const": "json-sorted-compact"},
+        "sig": {"type": "string", "description": "base64url-encoded Ed25519 signature"}
+      }
+    }
+  }
+}

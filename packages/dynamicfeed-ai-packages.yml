@@ -1,0 +1,154 @@
+generated: '2026-09-19'
+method: searched
+source: 'Registry metadata endpoints read 2026-09-19: registry.npmjs.org, pypi.org/pypi/<pkg>/json, crates.io/api/v1/crates/<crate>;
+  provider references in https://dynamicfeed.ai/llms.txt, /v1/onboard, /.well-known/ai-catalog.json and /security/advisories;
+  GitHub org https://github.com/Fluxdyne (Fluxdyne Pty Ltd, the company behind Dynamic Feed per /about).'
+docs: https://dynamicfeed.ai/connect
+note: Dynamic Feed ships no general REST client SDK. Its first-party packages are (a) a stdio MCP bridge, (b) DF-VERIFY/1
+  signature verifiers in three languages, (c) an agent-framework adapter package, and (d) an n8n node. The github.com/dynamicfeed/*
+  repository URLs recorded in npm/PyPI/crates metadata now 301 to github.com/Fluxdyne/* (df-verify -> fluxdyne-verify,
+  dynamicfeed-mcp -> fluxdyne-mcp). The provider's own security advisory DF-SA-2026-001 (2026-07-11) states that
+  the published verifier versions below do NOT enforce signing-key lifecycle and names required minimums (PyPI >=
+  1.0.3, npm @dynamicfeed/verify >= 1.0.2, @dynamicfeed/tools >= 0.1.1, crates df-verify >= 0.1.2) that as of 2026-09-19
+  are STILL NOT PUBLISHED — only crates.io dynamicfeed-verify 1.0.2 shipped its fix. /v1/onboard also advertises
+  "pip install dynamicfeed-witness", which does not exist on PyPI.
+packages:
+- language: javascript
+  name: dynamicfeed-mcp
+  registry: npm
+  official: true
+  kind: mcp-stdio-bridge
+  url: https://www.npmjs.com/package/dynamicfeed-mcp
+  install: npx -y dynamicfeed-mcp
+  repository: https://github.com/Fluxdyne/fluxdyne-mcp
+  version: 1.0.1
+  published: '2026-06-11'
+  bin: dynamicfeed-mcp
+  engines: node >=18
+  note: Depends on @modelcontextprotocol/sdk ^1.12.0; proxies to https://dynamicfeed.ai. Repo README says 62 tools;
+    hosted server has 94.
+- language: python
+  name: dynamicfeed-mcp
+  registry: pypi
+  official: true
+  kind: mcp-stdio-bridge
+  url: https://pypi.org/project/dynamicfeed-mcp/
+  install: uvx dynamicfeed-mcp
+  repository: https://github.com/Fluxdyne/fluxdyne-mcp
+  version: 1.0.0
+  published: '2026-06-01'
+- language: javascript
+  name: '@dynamicfeed/verify'
+  registry: npm
+  official: true
+  kind: signature-verifier
+  url: https://www.npmjs.com/package/@dynamicfeed/verify
+  install: npm install @dynamicfeed/verify
+  repository: https://github.com/Fluxdyne/fluxdyne-verify
+  version: 1.0.1
+  published: '2026-07-09'
+  bin: dynamicfeed-verify
+  note: Advisory DF-SA-2026-001 marks <= 1.0.1 as lifecycle-unaware and requires >= 1.0.2, which is not on npm as
+    of 2026-09-19.
+- language: python
+  name: dynamicfeed-verify
+  registry: pypi
+  official: true
+  kind: signature-verifier
+  url: https://pypi.org/project/dynamicfeed-verify/
+  install: pip install dynamicfeed-verify
+  repository: https://github.com/Fluxdyne/fluxdyne-verify
+  version: 1.0.2
+  published: '2026-07-09'
+  note: Advisory requires >= 1.0.3; not published as of 2026-09-19.
+- language: rust
+  name: dynamicfeed-verify
+  registry: crates.io
+  official: true
+  kind: signature-verifier
+  url: https://crates.io/crates/dynamicfeed-verify
+  install: cargo add dynamicfeed-verify
+  repository: https://github.com/Fluxdyne/fluxdyne-verify
+  version: 1.0.2
+  published: '2026-07-11'
+  note: The one verifier whose lifecycle fix (1.0.2) is published; the advisory records its clean-install verification
+    and crate SHA-256.
+- language: rust
+  name: df-verify
+  registry: crates.io
+  official: true
+  kind: signature-verifier
+  url: https://crates.io/crates/df-verify
+  install: cargo add df-verify
+  repository: https://github.com/Fluxdyne/fluxdyne-verify
+  version: 0.1.1
+  published: '2026-07-09'
+  note: Earlier crate name; advisory requires >= 0.1.2, not published.
+- language: javascript
+  name: '@dynamicfeed/tools'
+  registry: npm
+  official: true
+  kind: agent-framework-adapters
+  url: https://www.npmjs.com/package/@dynamicfeed/tools
+  install: npm install @dynamicfeed/tools
+  repository: https://github.com/Fluxdyne/fluxdyne-verify
+  version: 0.1.0
+  published: '2026-06-21'
+  note: Client + adapters for the Vercel AI SDK and LangChain.js, including the x402 paid rail. Advisory requires
+    >= 0.1.1, not published.
+- language: typescript
+  name: n8n-nodes-dynamicfeed
+  registry: npm
+  official: true
+  kind: workflow-node
+  url: https://www.npmjs.com/package/n8n-nodes-dynamicfeed
+  install: npm install n8n-nodes-dynamicfeed
+  repository: https://github.com/Fluxdyne/n8n-nodes-dynamicfeed
+  version: 0.1.0
+  published: '2026-06-11'
+- language: python
+  name: dynamicfeed-ros
+  registry: github
+  official: true
+  kind: ros2-package
+  url: https://github.com/Fluxdyne/dynamicfeed-ros
+  install: git clone https://github.com/Fluxdyne/dynamicfeed-ros
+  repository: https://github.com/Fluxdyne/dynamicfeed-ros
+  version: null
+  published: null
+  note: Not on PyPI or the ROS index (rosdistro fork is a fork, not a release); last push 2026-06-13. version null
+    = no registry to read.
+- language: python
+  name: dynamicfeed-witness
+  registry: pypi
+  official: true
+  kind: receipt-sdk
+  url: https://pypi.org/project/dynamicfeed-witness/
+  install: pip install dynamicfeed-witness
+  repository: null
+  version: null
+  published: null
+  note: 'Advertised verbatim in /v1/onboard ("sdk": "pip install dynamicfeed-witness") and llms.txt, but pypi.org/pypi/dynamicfeed-witness/json
+    returned 404 on 2026-09-19. The documented install does not work.'
+cdn:
+- name: verify.js
+  url: https://dynamicfeed.ai/verify.js
+  registry: cdn
+  version: null
+  published: null
+  note: Browser verifier served unpinned from the apex (13,156 bytes, application/javascript); no version in the
+    URL, so a consumer cannot tell which build they load.
+github_organization:
+  url: https://github.com/Fluxdyne
+  name: Fluxdyne Pty Ltd
+  public_repos: 13
+  created: '2026-06-09'
+  first_party_repos:
+  - fluxdyne-mcp
+  - fluxdyne-verify
+  - agent
+  - signed-okf
+  - dynamicfeed-ros
+  - n8n-nodes-dynamicfeed
+  - dynamicfeed-starter
+  note: The other repos (ai, llama_index, docs, rosdistro, awesome-mcp-servers*) are forks.

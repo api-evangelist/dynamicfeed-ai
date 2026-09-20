@@ -1,0 +1,51 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/verify.js (200, application/javascript, 13,156 bytes), https://dynamicfeed.ai/.well-known/df-verify.json
+  (browser + a2ui + badge fields), https://dynamicfeed.ai/verify, https://dynamicfeed.ai/connect, https://github.com/Fluxdyne/dynamicfeed-starter
+summary: 'Dynamic Feed ships client-side verification surfaces rather than UI widgets for its data: an unpinned
+  browser verifier script, a hosted verify page, A2UI receipt-card endpoints for agent hosts, an SVG badge, and
+  a one-click starter dashboard repo. These are distinct from the SDK/verifier packages in packages/.'
+families:
+- family: Browser signature verifier
+  components:
+  - name: verify.js
+    url: https://dynamicfeed.ai/verify.js
+    loader: <script src="https://dynamicfeed.ai/verify.js">
+    version: null
+    note: Unpinned; verifies DF-VERIFY/1 Ed25519 envelopes client-side against /.well-known/keys.
+  - name: Hosted verify page
+    url: https://dynamicfeed.ai/verify
+    note: Paste or fetch any signed response; signature checked in the browser, no account.
+- family: A2UI receipt cards
+  spec: https://a2ui.org (application/a2ui+json, v0.9)
+  components:
+  - name: verify-card
+    url: https://dynamicfeed.ai/v1/a2ui/verify-card
+  - name: inference-card
+    url: https://dynamicfeed.ai/v1/a2ui/inference-card
+  - name: robot-card
+    url: https://dynamicfeed.ai/v1/a2ui/robot-card
+  - name: eval-card
+    url: https://dynamicfeed.ai/v1/a2ui/eval-card
+  note: The provider labels these "unsigned caller-reported preview cards … not signature or verification results".
+    Listed as declared in df-verify.json; not individually probed.
+- family: Badge
+  components:
+  - name: badge.svg
+    url: https://dynamicfeed.ai/badge.svg
+    status: 200
+    content_type: image/svg+xml
+- family: Starter dashboard
+  components:
+  - name: dynamicfeed-starter
+    url: https://github.com/Fluxdyne/dynamicfeed-starter
+    note: Deploy-in-one-click live data dashboard with in-browser signature verification; JavaScript; last push
+      2026-06-10.
+- family: Interactive reference
+  components:
+  - name: /docs try-it
+    url: https://dynamicfeed.ai/docs
+    note: Server-rendered reference with keyless "try any endpoint" controls against production.
+  - name: /playground
+    url: https://dynamicfeed.ai/playground
+    status: 200

@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dynamicfeed.ai/schemas/robot-receipt-v1.json",
+  "title": "Dynamic Feed — robot-receipt/v1",
+  "description": "A neutral third-party WITNESS receipt for a single robot / embodied-AI decision — the 'black box' record of what a robot was told and which model/policy decided, at the moment it acted. A profile of receipt/v1: the same flat, detached-Ed25519-signed envelope, so /verify.js and scripts/verify_awareness.py verify it unchanged. Privacy by construction: the caller hashes the decision inputs (sensor/awareness context) LOCALLY and sends only a fixed-length sha256 plus non-PII labels (robot class, the deciding model/policy id, the go/caution/no-go verdict acted on, an optional coarse region). Dynamic Feed never sees raw sensor data, precise location, or imagery. The receipt proves this decision record EXISTED within a time window and is INTACT (tamper-evident), and which agent key (if any) co-signed. It is ADVISORY EVIDENCE ONLY: it does NOT certify the action was safe, correct, or lawful, is NOT a safety system, and is NOT the actuator — the robot's own certified safety layer makes the decision. Provenance is not truth.",
+  "type": "object",
+  "required": ["schema", "issuer", "issued_at", "data", "signature"],
+  "properties": {
+    "schema": {"const": "robot-receipt/v1"},
+    "issuer": {"type": "string", "const": "dynamicfeed.ai", "description": "The witness. Verify its key at GET /.well-known/keys."},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "data": {
+      "type": "object",
+      "required": ["content_hash", "mode", "robot_class", "model_id", "verdict", "inputs_sha256", "witnessed_at", "claim_boundary"],
+      "properties": {
+        "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$", "description": "sha256 of the canonical decision record (robot_class, model_id, verdict, decision, inputs_sha256, awareness_ref, region, latency_ms)."},
+        "mode": {"type": "string", "enum": ["robot", "robot (sample)"]},
+        "robot_class": {"type": "string", "enum": ["ground", "aerial", "marine", "orbital", "humanoid"], "description": "The class of embodied system. Caller-supplied, non-PII."},
+        "model_id": {"type": "string", "description": "The model / policy identifier that made the decision (the robot's deciding 'brain'). Caller-supplied; Dynamic Feed does not independently verify which model ran."},
+        "verdict": {"type": "string", "enum": ["go", "caution", "no-go"], "description": "The go / caution / no-go verdict the robot acted on. Caller-supplied."},
+        "decision": {"type": ["string", "null"], "description": "An optional short action label the robot took (e.g. 'takeoff', 'proceed', 'hold'). Caller-supplied, non-PII."},
+        "inputs_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$", "description": "sha256 of the decision inputs (sensor / awareness context), computed by the caller. The raw inputs are never sent to Dynamic Feed."},
+        "awareness_ref": {"type": ["string", "null"], "description": "Optional opaque reference to a prior Dynamic Feed signed awareness snapshot (snapshot_id) the decision was grounded on — links the decision to the signed facts it was told."},
+        "region": {"type": ["string", "null"], "description": "Optional COARSE region label (no precise coordinates). Caller-supplied, non-PII."},
+        "latency_ms": {"type": ["number", "null"], "description": "Decision latency the caller observed, in milliseconds. Caller-supplied."},
+        "witnessed_at": {"type": "string", "format": "date-time"},
+        "window": {
+          "type": "object",
+          "description": "Two-sided time bound. The lower field (a recent reference token committed inside the signed record) is the NOT-BEFORE lower bound; the notary log head is time-stamped by an independent RFC 3161 authority (POST /v1/anchor), which is the EXISTED-BY upper bound. The timestamp is instant and requires no account.",
+          "properties": {
+            "btc_lower": {
+              "type": "object",
+              "properties": {
+                "block_hash": {"type": "string"},
+                "height": {"type": "integer"},
+                "block_time": {"type": ["string", "null"]}
+              }
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "description": "Optional BYO-key robot/agent co-signature, verified BEFORE witnessing ('the robot attested, Dynamic Feed witnessed').",
+          "properties": {
+            "pubkey_b64": {"type": "string"},
+            "signature_b64": {"type": "string"},
+            "context_bound": {"type": "boolean"},
+            "signature_valid": {"const": true}
+          }
+        },
+        "claim_boundary": {"type": "string", "description": "The advisory-evidence, witness-only boundary, baked into the signed bytes so no log can strip it."}
+      }
+    },
+    "transparency": {
+      "type": "object",
+      "description": "Linkage into the public append-only notary transparency log (GET /v1/notary/log); the log head is RFC 3161 timestamped daily.",
+      "properties": {
+        "log_index": {"type": "integer"},
+        "prev_hash": {"type": "string"},
+        "entry_hash": {"type": "string"},
+        "entry_url": {"type": "string"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "sig"],
+      "description": "Detached Ed25519 signature over the canonical bytes of this envelope with the `signature` field removed (json-sorted-compact). Verify against GET /.well-known/keys.",
+      "properties": {
+        "alg": {"const": "Ed25519"},
+        "key_id": {"type": "string"},
+        "canonicalization": {"const": "json-sorted-compact"},
+        "sig": {"type": "string", "description": "base64url-encoded Ed25519 signature"}
+      }
+    }
+  }
+}

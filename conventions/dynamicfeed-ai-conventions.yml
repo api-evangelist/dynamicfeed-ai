@@ -1,0 +1,181 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/llms.txt, https://dynamicfeed.ai/docs (access-policy table), https://dynamicfeed.ai/connect,
+  https://dynamicfeed.ai/standard (DF-VERIFY/1), https://dynamicfeed.ai/receipt-spec, operation descriptions in
+  openapi/_original/dynamicfeed-ai-openapi.json, and live response headers observed 2026-09-19
+description: 'How the Dynamic Feed REST/MCP/A2A surface behaves across operations: keyless-by-default access, X-API-Key
+  for per-user state, x402 for paid calls, the signed provenance/freshness envelope on every response, batching,
+  streaming, error shapes, and what is NOT there (idempotency keys, cursor pagination, rate-limit headers).'
+base_url: https://dynamicfeed.ai
+api_style: REST over HTTPS with JSON bodies; a tool-dispatch batch endpoint; MCP Streamable HTTP; A2A JSON-RPC;
+  SSE
+authentication:
+  scheme: none (keyless) for reads via /mcp, POST /v1/batch and the /v1 robot/ground-truth routes; X-API-Key header
+    for per-user routes and direct feed GETs; x402 payment header for /v1/pro/*
+  key_issuance: POST /signup (optional email) returns api_key instantly
+  key_prefix_observed: amd_ (dashboard placeholder "amd_····")
+  docs: https://dynamicfeed.ai/docs
+  detail: authentication/dynamicfeed-ai-authentication.yml
+idempotency:
+  supported: false
+  coverage: none
+  mechanism: null
+  scope: []
+  note: No Idempotency-Key or equivalent is documented. The mutating surface is small — POST /signup, POST/DELETE
+    /v1/watchlist, POST/DELETE /v1/webhooks, the receipt/witness/notary/station POSTs, POST /v1/notary/feeds, POST
+    /v1/anchor — and the receipt family is append-only by design (a repeated POST mints a second receipt, which
+    the transparency log records as a second entry). Nothing prevents a double-fire.
+  docs: null
+dry_run:
+  supported: partial
+  mechanism: POST /v1/webhooks/test fires a test delivery to a registered URL; GET /v1/witness/sample, /v1/inference-receipt/sample,
+    /v1/robot-receipt/sample and /v1/eval-receipt/sample return keyless sample receipts without minting one
+  note: There is no generic dry-run flag; the samples let an agent see the shape before committing a real receipt.
+reversibility:
+  grade: documented
+  write_surfaces:
+  - surface: webhook registration
+    create: v1_webhooks_create_v1_webhooks_post
+    reversal: v1_webhooks_delete_v1_webhooks_delete
+    window: null
+    docs: https://dynamicfeed.ai/llms.txt
+    note: DELETE exists; no window is stated (assumed unbounded, but not asserted).
+  - surface: watchlist
+    create: v1_watchlist_post_v1_watchlist_post
+    reversal: v1_watchlist_delete_v1_watchlist_delete
+    window: null
+    docs: https://dynamicfeed.ai/llms.txt
+    note: DELETE /v1/watchlist?label=… removes an item; POST "add/replace" also overwrites.
+  - surface: signed receipts (witness, inference, robot, eval, station, proxy-witness, receipt, stamp, notarize,
+      answer)
+    create: v1_witness_v1_witness_post and siblings
+    reversal: null
+    window: null
+    docs: https://dynamicfeed.ai/receipt-spec
+    note: 'Irreversible by design: receipts are committed to an append-only transparency log and chained daily checkpoints.
+      The provider documents this as the product property ("a history that can''t be quietly rewritten"). An agent
+      must treat every receipt mint as permanent.'
+  - surface: RFC 3161 anchor
+    create: v1_anchor_v1_anchor_post
+    reversal: null
+    window: null
+    note: A timestamp artifact cannot be withdrawn.
+  - surface: API key
+    create: signup_signup_post
+    reversal: null
+    window: null
+    note: No key-revoke or rotate operation is published; the Terms say the provider may revoke keys.
+  - surface: x402 paid call
+    create: v1_pro_tool_v1_pro_tool__tool__post
+    reversal: null
+    window: null
+    docs: https://dynamicfeed.ai/x402
+    note: Settlement is on-chain USDC via a facilitator; no refund path is published ("payments are non-refundable"
+      in the Terms).
+  note: 'Graded documented (0.4): reversal operations exist for the two registration surfaces but no reversal WINDOW
+    is stated anywhere, and the receipt family is explicitly irreversible. Reads are the bulk of the API and are
+    na.'
+batching:
+  supported: true
+  endpoint: POST /v1/batch
+  max_calls_per_request: 20
+  paid_endpoint: POST /v1/pro/batch
+  paid_max_calls_per_request: 100
+  per_call_deadline_seconds: 20
+  facts_mode: 'add "facts": true to get each result as a reliability-graded canonical fact'
+  docs: https://dynamicfeed.ai/llms.txt
+pagination:
+  style: none
+  request_params:
+    limit: per-feed integer cap; no cursor/offset/page
+  response_fields: null
+  note: Feeds return a bounded current snapshot; history is exposed through dedicated routes (/v1/history, /v1/snapshot?date=,
+    /benchmarks/history) rather than paged lists.
+field_expansion:
+  supported: false
+metadata:
+  supported: false
+  note: Watchlist items carry a caller-chosen label; receipts carry caller-supplied payload hashes. No generic metadata
+    map.
+response_envelope:
+  provenance:
+    fields:
+    - source
+    - source_url
+    - measured_at
+    - license
+    - age_seconds
+    note: Per datapoint.
+  freshness:
+    fields:
+    - state (live|stale|unavailable)
+    - confidence
+    - observed_at
+    - age_seconds
+    - max_age_seconds
+    - reason
+  signature:
+    fields:
+    - alg (Ed25519)
+    - key_id
+    - canonicalization (json-sorted-compact)
+    - sig (base64url, 64 bytes)
+    verify: Drop `signature` (and `anchor` where present), json.dumps(sort_keys=True, separators=(",",":")) with
+      ensure_ascii, UTF-8, verify against GET /.well-known/keys; check key_id lifecycle against /.well-known/signing-key-registry.json
+    spec: https://dynamicfeed.ai/standard
+  served_by:
+    fields:
+    - provider
+    - url
+    - verify
+    - verify_scope
+    - key_lifecycle
+    - facts
+    - mcp
+    - docs
+    note: Present on every JSON response so a downstream machine can self-onboard.
+request_tracing:
+  request_id_header: x-railway-request-id
+  description: Set by the Railway edge on every response (observed); no provider-defined request id and no way to
+    send one in.
+  other_headers_observed:
+  - x-dynamic-feed (a connect hint on every response)
+  - cf-ray
+versioning:
+  scheme: path prefix /v1 plus legacy unversioned routes
+  mechanism: URL path
+  current: v1
+  header: null
+  detail: lifecycle/dynamicfeed-ai-lifecycle.yml
+error_envelope:
+  media_type: application/json
+  shapes:
+  - '{detail: string}'
+  - '{detail: [ValidationError]}'
+  - '{error: string, available_tools: []}'
+  - x402 body on 402
+  rfc9457: false
+  detail: errors/dynamicfeed-ai-problem-types.yml
+rate_limit_signaling:
+  headers: []
+  observed: No RateLimit-*, X-RateLimit-* or Retry-After header on the 200, 401 or 402 responses probed 2026-09-19
+  quota_visibility: GET /v1/me returns plan, calls used today, daily quota and remaining (keyed)
+  exhaustion_status: undocumented
+  detail: rate-limits/dynamicfeed-ai-rate-limits.yml
+cors:
+  observed: 'access-control-allow-origin: * and access-control-expose-headers: X-PAYMENT-RESPONSE on /v1/pro/* responses'
+security_headers_observed:
+- 'strict-transport-security: max-age=63072000; includeSubDomains; preload'
+- content-security-policy (default-src self …)
+- 'x-frame-options: DENY'
+- 'x-content-type-options: nosniff'
+- 'referrer-policy: strict-origin-when-cross-origin'
+- permissions-policy
+- 'cross-origin-opener-policy: same-origin'
+cross_links:
+  authentication: authentication/dynamicfeed-ai-authentication.yml
+  errors: errors/dynamicfeed-ai-problem-types.yml
+  lifecycle: lifecycle/dynamicfeed-ai-lifecycle.yml
+  rate_limits: rate-limits/dynamicfeed-ai-rate-limits.yml
+  webhooks: asyncapi/dynamicfeed-ai-webhooks.yml
+  plans: plans/dynamicfeed-ai-plans-pricing.yml

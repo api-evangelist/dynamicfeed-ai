@@ -1,0 +1,121 @@
+generated: '2026-09-19'
+method: searched
+source: Live probes on dynamicfeed.ai 2026-09-19 (MCP initialize/tools/list, /.well-known/*, POST /v1/pro/tool/current_time
+  for the 402, POST /v1/batch), the provider pages /standard, /receipt-spec, /trust and /x402, and openapi/_original/dynamicfeed-ai-openapi.json
+standards:
+- id: openapi-3.1
+  name: OpenAPI 3.1.0
+  conforms: true
+  evidence: https://dynamicfeed.ai/openapi.json (HTTP 200, application/json) declares "openapi":"3.1.0" with 148
+    paths / 158 operations; a second 3.1.0 document is served at /openapi-agent-public.json. Saved verbatim under
+    openapi/_original/.
+  caveat: Every 200 response declares an empty schema ({}), there are no securitySchemes, and 45 operations are
+    untagged — a FastAPI auto-export, not a curated contract.
+- id: mcp-2025-06-18
+  name: Model Context Protocol (protocolVersion 2025-06-18, Streamable HTTP)
+  conforms: true
+  evidence: POST https://dynamicfeed.ai/mcp initialize returned protocolVersion 2025-06-18, serverInfo {Dynamic
+    Feed 0.8.0}; tools/list returned 94 tools with inputSchema. Server card at /.well-known/mcp.json.
+- id: a2a-1.0
+  name: A2A Protocol 1.0 Agent Card
+  conforms: true
+  evidence: 'https://dynamicfeed.ai/.well-known/agent-card.json (200) graded conformant in a2a/dynamicfeed-ai-a2a.yml:
+    capabilities object, protocolVersion "1.0", skills array of 8, JWS signature.'
+  caveat: Uses the 0.3-era top-level url/preferredTransport rather than supportedInterfaces[].
+- id: x402
+  name: x402 HTTP 402 payment protocol (x402Version 1, exact scheme, USDC on Base)
+  conforms: true
+  evidence: 'POST https://dynamicfeed.ai/v1/pro/tool/current_time without payment returned HTTP 402 with a valid
+    x402 body: x402Version 1, accepts[].scheme exact, network base, maxAmountRequired 1000 (0.001 USDC), payTo 0xb525F2c54Ae0c3B3466206694726f85C7Cf7b985,
+    asset 0x8335…2913 (USDC), plus the bazaar discovery extension; access-control-expose-headers: X-PAYMENT-RESPONSE.
+    Menu at GET /v1/pro/catalog; rail status /v1/pro/diag reports enabled + can_settle.'
+- id: rfc9116
+  name: RFC 9116 security.txt
+  conforms: true
+  evidence: https://dynamicfeed.ai/.well-known/security.txt returned 200 text/plain with Contact, Expires (2027-06-03),
+    Preferred-Languages, Canonical and Policy fields; also served at /security.txt.
+  caveat: Policy points at /terms, which is a Terms of Service, not a vulnerability-disclosure policy; no Encryption
+    or Acknowledgments field.
+- id: rfc7517
+  name: RFC 7517 JSON Web Key Set
+  conforms: true
+  evidence: https://dynamicfeed.ai/.well-known/jwks.json returned a valid JWK Set with one EC P-256 key (kid dynamicfeed-agntcy-cosign-1).
+  caveat: The data-signing keys are Ed25519 and published in a non-JWKS map at /.well-known/keys; the JWKS carries
+    a different (co-signing) key.
+- id: jose-jws
+  name: JWS (RFC 7515) EdDSA signature on the agent card
+  conforms: true
+  evidence: agent-card.json signatures[0].protected decodes to {"alg":"EdDSA","kid":"df-ed25519-6ca0de29113b","typ":"JOSE"}.
+- id: openai-plugin-manifest
+  name: OpenAI ai-plugin.json manifest v1
+  conforms: true
+  evidence: https://dynamicfeed.ai/.well-known/ai-plugin.json (200) with schema_version v1, auth.type none, api.type
+    openapi -> /openapi-agent-public.json.
+- id: ard-1.0
+  name: Agentic Resource Discovery (ARD) ai-catalog specVersion 1.0
+  conforms: true
+  evidence: https://dynamicfeed.ai/.well-known/ai-catalog.json (200) with specVersion 1.0, host.trustManifest and
+    entries for the MCP server card, A2A card and OpenAPI.
+- id: json-schema-2020-12
+  name: JSON Schema 2020-12 / draft-07 receipt profiles
+  conforms: true
+  evidence: GET /schemas/index.json lists 14 DF-VERIFY/1 profiles; each fetched 200 as application/schema+json with
+    $schema 2020-12 (10) or draft-07 (4). Saved under json-schema/.
+- id: rfc3161
+  name: RFC 3161 Time-Stamp Protocol (anchoring)
+  conforms: null
+  evidence: POST /v1/anchor and /v1/checkpoints claim RFC 3161 timestamp artifacts; /v1/notary/log/head reported
+    last_anchor.backend rfc3161 at 2026-09-19T12:06:05Z. The provider itself states in /.well-known/df-verify.json
+    and the key registry that "complete independent validation is not claimed", so this is recorded as claimed-with-caveat,
+    not verified by this pass.
+- id: sse
+  name: WHATWG Server-Sent Events
+  conforms: true
+  evidence: GET /v1/stream is documented as EventSource-ready and /sse answered 200 text/event-stream and held the
+    connection open.
+- id: rfc9457
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: 'Errors are FastAPI-shaped: 401 -> {"detail":"Missing API key…"} (application/json), 422 -> HTTPValidationError
+    {detail:[{loc,msg,type}]}, 400 on /v1/batch -> {"error":"…","available_tools":[…]}. No application/problem+json
+    anywhere.'
+- id: oauth2
+  name: OAuth 2.0 / RFC 8414 / RFC 9728
+  conforms: false
+  evidence: /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource and /.well-known/openid-configuration
+    all 404; the OpenAPI declares no securitySchemes. Access is keyless or a static X-API-Key. Not applicable by
+    design rather than a gap in an OAuth API.
+- id: rfc9727
+  name: RFC 9727 API catalog
+  conforms: false
+  evidence: /.well-known/api-catalog 404; /apis.json and /.well-known/apis.json 404.
+- id: pagination
+  name: Cursor/offset pagination convention
+  conforms: false
+  evidence: Feeds take a `limit` query parameter only; no cursor, page, offset or Link header is declared or documented.
+- id: idempotency
+  name: Idempotency-Key (IETF draft-ietf-httpapi-idempotency-key-header)
+  conforms: false
+  evidence: No idempotency header is documented anywhere in the spec, llms.txt or docs.
+domain_standard:
+  sector: AI agent infrastructure / live-data provider
+  applicable_standards_probed:
+  - MCP
+  - A2A
+  - x402
+  - ARD
+  - OpenAI plugin manifest
+  - DF-VERIFY/1 (provider-authored, self-described open standard)
+  signature:
+    declared: true
+    standards:
+    - mcp-2025-06-18
+    - a2a-1.0
+    - x402
+    - ard-1.0
+    evidence: 'The contract layer itself declares the agent-market standards: /.well-known/mcp.json (MCP server
+      card), /.well-known/agent-card.json (A2A), the 402 body (x402Version 1 + bazaar extension), /.well-known/ai-catalog.json
+      (ARD). These are declared in machine-readable documents, not marketing prose.'
+    note: 'DF-VERIFY/1 (/standard) and receipt-spec/1 (/receipt-spec) are Dynamic Feed''s own published specifications
+      with conformance vectors on GitHub; they are recorded as provider-authored, not as an industry standard. DFEP
+      (/dfep) is self-described as a non-normative working draft with "Conformance: Not claimed" and is not counted.'

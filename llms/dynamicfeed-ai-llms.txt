@@ -1,0 +1,365 @@
+# Dynamic Feed
+
+> A global trust, discovery and routing network: autonomous systems find, verify and use the world's information and services in real time. The neutral live-data & ground-truth layer for AI agents and researchers. Fresh, current data
+> that language models can't reliably know on their own: multi-model weather, space & satellites,
+> natural hazards, security & exploited CVEs, sanctions, software versions, shipping, China macro and
+> more, 20 domains / 94 tools over one REST API or a keyless MCP endpoint, PLUS a robot/agent
+> situational-awareness API returning Ed25519-signed, independently time-stamped go/caution/no-go verdicts.
+> Every datapoint is provenance-stamped and citeable, it carries its source, licence, timestamp and
+> age, so you can cite it and verify usage rights yourself.
+
+Agents & robots start here, ONE call returns everything to connect, use, verify, mint receipts and recruit the next agent (keyless, no human): GET https://dynamicfeed.ai/v1/onboard
+
+Production / high-volume? The keyless tier is fair-use (up to 20 calls/request). For paid AGENT-NATIVE access via x402 (USDC on Base), you get an HTTP 402 quote, pay from your wallet, and are served; no signup, no human, three endpoints: POST https://dynamicfeed.ai/v1/pro/batch (up to 100 calls/request), POST https://dynamicfeed.ai/v1/pro/tool/{tool} (one signed call to any tool), POST https://dynamicfeed.ai/v1/pro/asof (signed as-of archive replay for backtesting + decision-time audit). Shop the live menu (prices + schemas): GET https://dynamicfeed.ai/v1/pro/catalog · human walkthrough: https://dynamicfeed.ai/x402
+
+Pick tools by domain, curated bundles (devsecops, weather-climate, natural-hazards, finance-markets, compliance-risk, space-aerospace, logistics-mobility, ai-ecosystem, ground-truth, robotics-awareness): GET https://dynamicfeed.ai/v1/bundles
+
+SDKs: Python `pip install dynamicfeed-tools` (client + LangChain / CrewAI / LlamaIndex / Pydantic-AI adapters). TypeScript `dynamicfeed-tools` (Vercel AI SDK + LangChain.js) publishing soon. MCP runner: `npx dynamicfeed-mcp`.
+
+Complete machine-readable tool reference (all tools + examples): https://dynamicfeed.ai/llms-full.txt
+
+## Ask Dynamic Feed, common agent queries → the tool that answers
+If an agent (or you) needs any of these, the answer is one call. READS are keyless: the MCP endpoint
+(https://dynamicfeed.ai/mcp) or `POST https://dynamicfeed.ai/v1/batch`, no key, no signup. The WRITE
+receipts below note where a free self-serve key (POST /signup) is required:
+- "Is my AI's answer about *now* still true?" / "What changed since my training?" → `reality_check`, `whats_changed_since_your_training`
+- "Which provider/tool can answer this?" / "find me the best source for X" → `GET /v1/discover?need=...`, ranked candidates with an EXPLICIT vantage each: Dynamic Feed tools carry measured 24h uptime/latency + a keyless call recipe; matching external MCP servers are listed as registry-reported (unmeasured); demo at /discover
+- "Answer this question and PROVE it" / "give me a signed verdict with evidence" → `POST /v1/answer`, declare checks (expect or observe) against any live tool, get one Ed25519-signed Decision Receipt with per-check verdicts + evidence; explainer at /answers
+- "Was the parametric trigger met?" / "re-check a payout determination" → `GET /v1/trigger-receipt?metric=&op=&threshold=&city=`, a signed trigger-receipt/v1 with methodology + raw-reading hashes; demos at /recheck-trigger and /weather-eot
+- "Does package X@version have a known vulnerability?" → `check_vulnerability` (OSV); "what's being actively exploited right now?" → `exploited_vulnerabilities` (CISA KEV + EPSS)
+- "What's the latest stable version / end-of-life of <language/runtime/framework>?" → `software_version`
+- "What's the weather, forecast or air quality in <city>?" → `current_weather`, `weather_forecast`, `air_quality`
+- "Is there an earthquake, wildfire, flood or disaster near <place>?" → `earthquakes`, `wildfires`, `flood_forecast`, `global_disasters`
+- "Is <market> open right now?" → `market_hours`; "what are current US interest rates?" → `interest_rates`
+- "Is <person/company/vessel> on the OFAC sanctions list?" → `sanctions_screen`
+- "Where are live aircraft, airport delays, or GPS jamming over <area>?" → `live_flights`, `airport_delays`, `gps_interference`
+- "Where is a satellite right now / what's the space weather?" → `satellite_position`, `space_weather`
+- "Can a robot safely act at <location> right now?" → `POST /v1/awareness`, a signed go / caution / no-go verdict
+- "Give me a verifiable receipt that this agent-to-agent transaction happened" → `POST /v1/witness` (free key, self-serve POST /signup), signed, independently time-stamped; a witness BESIDE the deal, never the money path
+- "Did I get the model I asked for, or a silent downgrade?" / "prove which model actually answered" → `POST /v1/inference-receipt` (ProofOfModel; free key, self-serve POST /signup), a signed receipt of requested-vs-served model; hash locally, drop-in via `dynamicfeed-witness`; live demo at /receipts
+- "Give me a black-box receipt for what my robot/embodied-AI decided" → `POST /v1/robot-receipt` (free key, self-serve POST /signup), a signed record of the verdict it acted on + which model decided (advisory evidence, never a safety system)
+- "Notarize a benchmark run so the score can't be retuned and my private test set stays private" → `POST /v1/eval-receipt` (free key, self-serve POST /signup), commit the sealed set before the run, get a signed, un-retunable Verified Eval
+- "Prove this datapoint is authentic and unaltered" → verify its Ed25519 signature against `/.well-known/keys` (in-browser at /proof)
+- "Make my answer independently verifiable and cite my source" → the `cite` tool returns a ready-to-paste `embed` (a "✓ Grounded by Dynamic Feed" chip + a Markdown one-liner) that re-verifies the live value in any reader's own browser at `/c/<token>`, attach it so your output proves itself (and any reader can add Dynamic Feed to their own agent in one click).
+Every answer carries its source, licence, timestamp and a signature: cite the source, verify the number.
+
+## What it is
+Dynamic Feed is a cross-domain data layer for AI, serving up-to-date structured data models lack,
+drawn from the world's authoritative public instruments (NASA, NOAA, USGS, CISA, FAA, US Treasury/OFAC,
+FDA, World Bank, CelesTrak/Space-Track) plus measurements we make ourselves. The power is cross-domain:
+ask what no single source can answer. Each source's licence is published at GET /v1/sources and on every
+datapoint's provenance envelope, check it for your use case.
+
+(Some feeds are licence-gated and return a coming-soon note until cleared, finance prices, crypto and
+world news among them. Each source's licence is surfaced so you can confirm rights before you rely on it.)
+
+## Trust / provenance (why this data is citeable)
+Every datapoint carries a `provenance` envelope (`source`, `source_url`, `reported_at`, `measured_at`,
+`age_seconds`) plus a `freshness` envelope whose `state` is one of live / stale / unavailable, with
+`observed_at`, `age_seconds` and `max_age_seconds`. Cite the source; verify the number.
+Full source catalog + chain-of-custody: `GET /v1/sources` (every upstream feed with its licence, official
+URL, update cadence and commercial-use status) and `POST /v1/explain
+{"subject":"earthquakes"}` (trace one subject's custody trail: origin → ingest → normalize → serve).
+`GET /v1/facts` (or `POST {"calls":[...]}`), any tool returned as ONE canonical fact (`fact/v1`) with an
+HONEST verification block: confidence, source count, and `verified` (true only when corroborated by 2+ sources
+AND fresh). Signing proves integrity, not truth: signed != verified. Every signed response also carries a
+`served_by` block (provider, verify, facts, mcp, docs) so a downstream machine can self-onboard.
+Forced-compliance evidence use-cases (signed, independent, re-checkable years later): /sebi-algo-evidence
+(India SEBI algo trace-to-source) and /ai-decision-evidence (US discovery + UK ICO automated-decision inputs).
+
+## Evidence & signed receipt pages (self-serve, keyless, re-verifiable)
+One engine mints the same signed, independently re-checkable receipt for every sector; only the question changes.
+- /industries — the blanket map: 40 sectors, each with its one-line evidence question and its receipt link.
+- /priority-proof — seal a work's SHA-256 now, prove the date later without disclosing it (defensive publication / prior art). Not a patent.
+- /sealed-record — seal a document (will, embargo, whistleblower archive), later prove a revealed copy is byte-identical to the sealed one. Not a legal will; DF never holds the document.
+- /receipt-spec — the receipt format (receipt-spec/1): canonical form, strip rule, 8-step offline verification an adverse party can run.
+- /checkpoints — daily signed digests of the append-only archive, chained day to day and dual-witnessed (independent RFC 3161 + DLT timestamp); list at GET /v1/checkpoints, proof at GET /v1/checkpoints/{day}/proof.
+- /proxy-witness — route any third-party API call through us (POST /v1/proxy-witness, free key) and get a signed receipt of exactly what that URL returned: status, content-type, size, SHA-256. Credentials redacted, hash-first, SSRF-guarded.
+- Sector receipt pages: /dicamba-window /weather-eot /laytime-weather /storm-window /recheck-trigger /model-receipts /kev-receipt /flood-record /outage-receipt /curtailment-record /sanctions-receipt /cat-bond-trigger /road-transport-evidence /conjunction-record /mrv-evidence /physical-risk-record /blast-conditions /telecom-sla /aid-trigger /food-safety-record /resource-verification /source-record /batch-conditions /tax-customs-record /ev-range-record /property-climate-record /custody-receipt /takedown-receipt /incident-context.
+Every receipt re-verifies keyless at /verify against GET /.well-known/keys. Advisory evidence, not a certification.
+- GET /schemas/index.json — the whole DF receipt-schema family (DF-VERIFY/1), self-describing: every profile's $id, title and the endpoint that mints it. Validate any receipt against its schema.
+- POST /v1/station/register + POST /v1/station/reading (free key) — WE SIGN YOUR STATION: register your own sensor, then each reading it reports comes back as a signed station-receipt/v1 that says plainly the station measured it and Dynamic Feed only witnessed it. GET /v1/station/{id} is keyless. Page /we-sign-your-station.
+- POST /v1/vc — DISABLED_SECURITY_QUARANTINE (returns 503). The legacy wrapper did not verify exact inner receipt bytes, active lifecycle, or claimant/signer/witness roles. Status: /a2a/ext/ground-truth/v1. Do not send mint requests.
+
+## Robot & verifiable awareness (signed + RFC 3161 timestamped)
+For AI agents and robots that ACT in the real world, not just answer:
+- `POST /v1/awareness`, one call → a per-class go / caution / no-go verdict for a robot at a location
+ (ground | humanoid | aerial | marine | orbital), fusing live weather, air quality, space weather and
+ nearby earthquakes under a hard deadline (never hangs; degrades to caution; floors to caution on stale
+ safety data). Keyless.
+- Every awareness snapshot is **Ed25519-signed**, verify against `GET /.well-known/keys`. `POST /v1/anchor`
+ has a snapshot's hash time-stamped by an independent **RFC 3161** authority, only the hash, instant, no
+ account, free. So a robot's decision record is independently verifiable, forever, even against us.
+- `POST /v1/witness`, the NEUTRAL receipt rail for machine-to-machine / agent-to-agent transactions: POST a
+ record (or just its sha256) and get an Ed25519-signed, transparency-logged, RFC 3161 time-stamped receipt
+ (`txn-receipt/v1`). A witness BESIDE the transaction, NEVER in the value path, Dynamic Feed signs and
+ time-stamps a hash, it never moves, holds or routes funds. Optional agent co-signature proves which agent attested.
+ Free key. Keyless sample + in-browser verify at /witness; the agent entry point is /agents.
+- `POST /v1/drift`, audit a batch of an LLM's claims against the live feeds, graded drifted / confirmed /
+ unverifiable + severity (`detect_drift`). `POST /v1/batch`, run up to 20 read-only tool calls in one request.
+- `POST /v1/guard`, pre-answer anti-hallucination middleware: POST the draft answer your AI is about to
+ send, get back a verdict of pass / revise + the exact corrections, so it's fixed before the user sees it.
+- `GET /v1/snapshot?date=YYYY-MM-DD`, historical world-state: what Dynamic Feed reported on a given day
+ (auditable archive, captured daily; honest about coverage, never a fabricated past).
+- `GET /v1/stream?tool=…&args=…&interval=…`, Server-Sent Events: a tool's live value pushed every N
+ seconds (point an EventSource at it), bounded for fair use (interval 5–300s, up to 60 updates).
+- Live platform status: `GET /uptime` (human) · `GET /status.json`.
+
+## REST API
+- Base URL: https://dynamicfeed.ai · OpenAPI: https://dynamicfeed.ai/openapi.json · Docs: /docs
+- Agentic Resource Discovery (ARD): GET https://dynamicfeed.ai/.well-known/ai-catalog.json, our ARD-conformant catalog declaring the keyless MCP server + REST/OpenAPI with domain-anchored, Ed25519-verifiable trust metadata (spec: github.com/ards-project/ard-spec).
+- Discover the whole agent/robot surface in ONE call: `GET https://dynamicfeed.ai/v1`, every /v1
+ endpoint, what it does, and a copy-paste example (keyless).
+- Free API key: POST https://dynamicfeed.ai/signup (returns an api_key; 100 calls/day free). Send it
+ as the `X-API-Key` header on every REST call.
+- Per-user watchlist (needs your key): `POST /v1/watchlist` add/replace the subjects you monitor
+ ({label, tool, args}); `GET /v1/watchlist?pull=true` returns the CURRENT value of every watched item
+ in one call (your whole dashboard); `DELETE /v1/watchlist?label=…` to remove.
+- Webhooks / push-on-change (needs your key): `POST /v1/webhooks` register {url, tool, args}, the URL is
+ SSRF-validated (public http/https only) and you get a one-time HMAC secret; we POST a signed event
+ (X-DynamicFeed-Signature) when that tool's value changes. `GET`/`DELETE /v1/webhooks`, `POST /v1/webhooks/test`.
+
+## Time-machine replay (paid), what did the data say at time T?
+- `GET /v1/asof?tool=<tool>&t=<ISO-8601>`, the archived observation nearest at-or-before time T,
+ replayed verbatim from Dynamic Feed's append-only archive (capturing every served datapoint since
+ 2026-06-07): the value as served then, `archived_at`, `distance_seconds` from your requested instant,
+ and the exact archive object it came from. Ed25519-signed (verify against `GET /.well-known/keys`)
+ and honest about coverage, a moment the archive didn't capture returns a clear miss with the nearest
+ captured day, never a fabricated past.
+- Built for agent backtesting, audit trails and "what did we know at decision time" disputes. Requires
+ a PAID API key (Pro and up); free keys get a 402 with an upgrade pointer (dynamicfeed.ai/dashboard).
+
+## MCP (for AI agents), keyless
+- Remote endpoint, no API key, all 94 tools. Point any client at the URL:
+ - Streamable HTTP or legacy SSE, auto-detected: https://dynamicfeed.ai/mcp (explicit SSE: /sse)
+ - Local runner: `npx -y dynamicfeed-mcp` or `uvx dynamicfeed-mcp`
+- Config: { "mcpServers": { "dynamic-feed": { "url": "https://dynamicfeed.ai/mcp" } } }
+- MCP is keyless + free (fair-use). The Pro/Ultra/Mega tiers apply only to the REST API.
+- Optional: send your free `X-API-Key` header on MCP calls too, it identifies your app so your usage
+ is attributed to you and you keep priority as fair-use limits roll out. The default stays fully keyless.
+
+## The 94 tools, by vertical
+1. LLM Pricing & Models, `search_ai_models` (closed-flagship pricing/capabilities, GET /models),
+ `ai_models` (trending open models via Hugging Face, GET /ai-models).
+2. Service Status, `service_status` (live up/down for major AI & dev services, GET /status).
+3. Provider Latency [PROPRIETARY], `ai_provider_latency` (latency & uptime we measure across AI
+ providers; can't be backfilled, GET /benchmarks; permanent daily archive at GET /benchmarks/history).
+4. Market Hours, `market_hours` (is a market open now, computed from exchange schedules, GET /market-hours).
+5. Software Versions, `software_version` (latest stable + end-of-life for languages/runtimes/
+ frameworks/DBs/OSes, GET /versions).
+6. Security, `security_advisories` (CVEs + fixed version, GET /advisories), `check_vulnerability`
+ (is package@version vulnerable, OSV.dev, GET /advisories/check), `exploited_vulnerabilities`
+ (CISA KEV + EPSS, what's actively exploited, GET /exploited-vulnerabilities), `package_health`
+ (deps.dev, license + OpenSSF Scorecard + advisory count + popularity for an npm/PyPI/Go/Maven/Cargo/
+ NuGet/RubyGems package; the "should I depend on this?" check, GET /package-health).
+Developer & web: `github_releases` (latest GitHub releases for a repo, GET /github-releases), `dns_lookup`
+(live DNS via Cloudflare DNS-over-HTTPS, GET /dns), `cert_check` (live TLS certificate check by direct handshake, issuer, expiry, days left, SANs), `wikipedia_trends` (what the world is looking up right now, top Wikipedia articles + per-topic attention trends, CC0 data), `hacker_news` (live Hacker News tech pulse, GET /hacker-news), `internet_outages` (live BGP routing health for an ASN/IP/prefix via RIPEstat, global visibility + outage signal, GET /internet-outages).
+7. Transport & Vehicles, `live_flights` (real-time aircraft, adsb.lol, GET /flights), `airport_delays`
+ (FAA ground stops/delays, GET /airport-delays), `gps_interference` (probable GPS jamming/spoofing over an
+ area, MEASURED from live ADS-B navigation integrity, the GPSJam method; derived by us, GET /gps-interference),
+ `aviation_weather` (decoded METAR + TAF for any ICAO airport, flight category VFR/MVFR/IFR/LIFR, winds,
+ visibility, ceilings + raw report; NOAA AWC public domain, GET /aviation-weather; default YBBN Brisbane;
+ cross-reference gps_interference + airport_delays for the full aviation evidence stack),
+ `vin_decode` (what vehicle is this VIN, according to the US regulator: decodes a 17-character VIN
+ (or a partial VIN with NHTSA's `*` wildcard) against NHTSA's vPIC catalog of the manufacturer VIN
+ filings required under 49 CFR Part 565. Make, manufacturer, model, series/trim, model year, body
+ class, vehicle type, doors/seats; powertrain incl. fuel type, electrification level, cylinders,
+ displacement, horsepower, drive type, transmission, EV battery + drive unit; assembly plant
+ city/state/country; the full factory safety-equipment list (ABS, ESC, TPMS, airbag positions,
+ automatic emergency braking, lane-keep, blind-spot, adaptive cruise, event data recorder); GVWR
+ weight class. NHTSA's own error codes + check-digit verdict ride on every response. NHTSA vPIC,
+ keyless, public domain, 24 h cache. SPECIFICATION decode only, describing the vehicle as built:
+ NOT a registration, title, ownership, insurance, odometer, accident or theft record, and it holds
+ no information about any person. Coverage per NHTSA: ~99% from model year 1995, ~60-65% for
+ 1980-1994, nothing before 1980).
+8. Live Weather, `current_weather` (GET /weather), `weather_forecast` (16-day, GET /forecast),
+ `air_quality` (US & EU AQI, GET /air-quality), `air_quality_fusion` (two-network
+ cross-validated AQ, Open-Meteo CAMS model vs OpenAQ ground monitors, per-pollutant
+ agreement verdict; AU city presets + any lat/lon). [Open-Meteo, commercial licence;
+ OpenAQ, per-station licences commercial-use-filtered, attribution carried.]
+ `pollen_forecast` (airborne pollen / allergen forecast, six pollen types alder/birch/grass/
+ mugwort/olive/ragweed in grains/m³, each banded low/moderate/high/very-high, for hay-fever /
+ asthma / rhinitis; current hour + next-day peak + dominant allergens; EUROPE-ONLY coverage,
+ outside Europe it honestly reports coverage=out_of_region instead of guessing; DISTINCT from
+ air_quality which serves pollutants not biological pollen; Open-Meteo Air Quality API / Copernicus
+ Atmosphere Monitoring Service CAMS European ensemble, CC BY 4.0 under Open-Meteo's paid commercial
+ plan, attribution to Open-Meteo + CAMS carried; informational only, not medical advice).
+9. Space & Orbit, `orbital_data_centers` (compute/AI spacecraft in orbit, GET /orbital-datacenters),
+ `satellites` (catalog, GET /satellites), `satellite_position` (SGP4 by NORAD id, GET /satellite),
+ `space_weather` (NOAA R/S/G scales, Kp, solar wind, GET /space-weather),
+ `rocket_launches` (upcoming/recent orbital launches from Launch Library 2, The Space Devs;
+ per launch: provider, vehicle, pad, net time + live T-minus countdown, mission, go/scrub status;
+ free to use commercially, value-added envelope),
+ `spacex` (composite digest, next & recent SpaceX launches + Starlink constellation size, from
+ public data; reuses rocket_launches + satellites, no new upstream; independent, not affiliated
+ with SpaceX; NO financial/stock/valuation data). [CelesTrak/Space-Track + NOAA + The Space Devs.]
+10. Natural Hazards, `earthquakes` (USGS), `natural_events` (NASA EONET), `wildfires` (NIFC),
+ `water_levels` (USGS rivers, US; `au_water` is the Australian counterpart), `drought` (US Drought Monitor), `climate_enso` (El Niño/La Niña state + NOAA alert status, the global drought/flood/bushfire risk driver), `sst_anomaly` (ocean temperature + anomaly with a marine-heatwave flag, NOAA OISST), `sea_ice` (daily Arctic + Antarctic sea-ice extent + week/decade change, NSIDC Sea Ice Index), `global_disasters` (GDACS),
+ `volcanoes` (USGS Volcano Hazards Program, US, public domain),
+ `tides` (NOAA CO-OPS, US coastal water levels + high/low predictions, public domain),
+ `hurricanes` (active tropical cyclones from NOAA NHC, tropical depressions, storms, and
+ hurricanes; per storm: Saffir-Simpson category, position, max winds, pressure, movement, advisory
+ link; Atlantic + Eastern/Central Pacific; zero storms off-season is the honest state; NOAA public
+ domain, keyless),
+ `au_water` (Australian river heights + gauge rainfall near any AU location, BoM Water Data
+ Online, per-owner CC-BY Table-1 attribution enforced per station; observational gauge data,
+ not flood warnings),
+ `flood_forecast` (5-day river-discharge forecast near any AU location, Copernicus CEMS
+ GloFAS daily run, served instantly from a daily-retrieved extract; raw model guidance with
+ peak + trend, no severity thresholds added, not a flood warning),
+ `uk_water` (live UK river & water levels + flood warnings near any England location, UK
+ Environment Agency real-time flood-monitoring API; per gauge: current level, trend, typical
+ range, plus active EA flood alerts/warnings; England only; OGL v3.0 with the EA's mandated
+ attribution; observational + alert data, not a forecast).
+Ocean: `marine_forecast` (marine / surf forecast for a coastal point, Open-Meteo Marine API,
+CC-BY 4.0; current sea state + next-24-hour outlook: significant wave height/period/direction,
+swell, wind-wave, sea-surface temperature; AU presets gold_coast/byron/bells_beach/margaret_river/
+sydney or any lat/lon worldwide; FORECAST data, not a substitute for an official marine warning),
+`ocean_buoys` (live in-situ marine observations from NOAA NDBC ~1,300-station network, wave
+height/period/direction, wind, pressure, air + water temperature, dewpoint, visibility, each with
+the buoy's own timestamp; bulk-file fan-out (one fetch serves all station lookups); US/global-ocean
+coverage; no AU buoys; NOAA public domain, keyless).
+11. China macro, `china_data` (World Bank: 12 indicators + a derived trade balance, GET /china).
+12. Shipping, `shipping_status` (live Baltic AIS vessels, Digitraffic, GET /shipping).
+13. Sports & Events, `sports_pulse` (global ATTENTION to an event/team/competition + its official
+ schedule, GET /sports). Daily Wikipedia article views by language edition (momentum, peak, per-
+ language breakdown) + hosts/dates/sport from Wikidata. Wikimedia + Wikidata (CC0), the neutral
+ attention layer, NOT live scores, fixtures or odds. `world_cup`, 2026 FIFA World Cup fixtures + final
+ results (all 104 matches, openfootball / public domain), GET /worldcup. Results post-match, not live scores.
+
+Rates: `interest_rates` (US benchmark money-market rates, NY Fed, GET /rates).
+Government & compliance (informational; confirm against the official source): `sanctions_screen`
+(OFAC SDN, GET /sanctions), `federal_register` (US rules/EOs, GET /federal-register), `gov_contracts`
+(US federal contract & assistance AWARDS from USAspending.gov, who was awarded what by which agency for
+how much over what period; filter by agency / recipient / keyword, award_type contract | grant | all,
+min_amount floor, largest-first; the authoritative US public spending record, routinely cross-examined
+in audits, FOIA and oversight, so an automated claim about a vendor or programme is backed by a signed
+contemporaneous record; US Treasury public domain 17 U.S.C. 105, API code CC0, keyless), `drug_shortages`
+(FDA openFDA, GET /drug-shortages), `fda_recalls` (recent FDA-regulated RECALLS & enforcement
+actions via openFDA, category = drug (default) | food | device, optional product/firm/reason
+query; per item: product, recalling firm, reason, classification Class I/II/III, status, recall
+date, distribution pattern, state/country; plus counts by classification + the newest recall date
+surfaced separately; DISTINCT from product_recalls (CPSC consumer goods) and drug_shortages (FDA
+supply gaps); US-gov public domain, CC0; INFORMATIONAL, not for clinical/safety decisions, may be
+incomplete), `health_surveillance` (US CDC public-health surveillance,
+current level + week-over-week trend of circulating respiratory illness from ED visits + lab
+positivity, plus CDC NWSS wastewater viral activity; US only, population-level signal not case
+counts; CDC public domain), `clinical_trials` (live clinical-trial registrations + status from
+ClinicalTrials.gov, NCT id, status, phase, conditions, sponsor, enrollment, dates; filter by
+condition or free-text query; US NIH/NLM public domain; self-reported registry data),
+`global_indicator` (a flagship development statistic from Our World in Data, latest value + a short
+multi-year trend for a country, with full source attribution; ONE source MANY indicators: CO2 per
+capita, population, fertility, urbanisation, GDP-per-capita as a PPP development stat NOT a market
+price, extreme poverty, R&D spend, Human Development Index, literacy, internet & electricity access;
+distinct from global_macro/china_data which use the World Bank, OWID adds the long-run development +
+climate set; ISO-3 country or World aggregate; OWID processing layer CC BY 4.0 + every underlying
+producer's citation & licence; a fail-closed runtime gate serves only commercially-redistributable
+underlying sources, CC BY / CC BY IGO / CC0 / public domain; keyless; annual-ish statistics).
+Ground-truth & utility: `whats_changed_since_your_training` (GET /whats-new), `reality_check`
+(fact-check vs live data, GET /reality-check), `current_time` (GET /time), `countdown` (GET /countdown),
+`world_pulse` (cross-domain digest, GET /world-pulse), `world_events` (latest global news-event coverage from the GDELT Project, which monitors worldwide news in 100+ languages, filter by keyword + outlet country; article metadata with outlets + timestamps, open GDELT terms), `cite` (a fresh citeable source + timestamp, GET /cite),
+`detect_drift` (audit an LLM's claims against live feeds + severity, POST /v1/drift),
+`public_holidays` (public/statutory holidays for a country + optional state/region in a year,
+date, name, weekday, observed-shift, next upcoming; 100+ countries; computed in-house via the
+open-source holidays library, MIT, holiday dates are non-copyrightable facts; pairs with
+market_hours), `wikidata_facts` (structured factual statements about a named entity from Wikidata,
+description, class, key properties + cross-reference identifiers + QID; reference/knowledge lookup;
+CC0 1.0 public domain, no attribution required).
+Energy & grid: `energy_grid` (US power-grid demand/generation/fuel mix, EIA), `carbon_intensity`
+(GB grid carbon intensity + the cleanest upcoming window, NESO), `grid_carbon` (live grid carbon
+intensity, gCO2/kWh + trend + fuel mix, Australian NEM per-state, DERIVED from AEMO 5-min dispatch
++ AEMO's own CDEII emission factors and honestly flagged so, plus Great Britain, NESO-measured).
+Australian economy: `au_economy` (official Australian Bureau of Statistics indicators via the ABS
+Data API/SDMX, STATISTICS ONLY, no prices: indicator = cpi (annual inflation, default) |
+cpi_quarterly | unemployment | wages | gdp; latest value + real ABS reference period + short trend.
+CPI annual inflation is DERIVED from the ABS All-groups CPI index, ABS publishes the index, not the
+annual rate, flagged derived:true with the index alongside; unemployment, wage growth (WPI) and GDP
+growth are ABS's own published rates. CC BY 4.0, keyless; the AU-sovereign macro complement to
+global_macro/china_data).
+US economy: `us_economy` (official U.S. Bureau of Labor Statistics indicators via the BLS Public Data
+API, STATISTICS ONLY, no prices: indicator = cpi (annual inflation, default) | unemployment |
+payrolls (monthly non-farm jobs change) | ppi (producer-price inflation) | wages (average-hourly-
+earnings growth); latest value + real BLS reference period (e.g. 2026-05) + short trend. CPI, PPI and
+wage growth are DERIVED as a 12-month change from the BLS index/$ level, flagged derived:true with
+the raw index/level alongside; unemployment is BLS's own published rate, payroll change is a
+month-on-month difference. US public domain, keyless; the monthly US macro complement to
+global_macro/au_economy).
+14. Bitcoin Network, `bitcoin_network` (live Bitcoin NETWORK telemetry, infrastructure metrics
+ ONLY, no price data: recommended fee tiers sat/vB, mempool size + pending fees, latest block
+ height + timing, current mining difficulty + next-adjustment countdown, 3-day average hashrate
+ EH/s, blocks-until-next-halving + estimated date + current/post-halving block subsidy; mempool.space
+ public REST API, AGPL-3.0 open-source, keyless; Blockstream Esplora MIT fallback; NO BTC/USD or fiat),
+ `lightning_network` (Bitcoin LIGHTNING NETWORK aggregate stats, infrastructure metrics ONLY, no
+ price data: node count, public channel count, total public channel capacity in BTC + sats, average +
+ median channel capacity, Tor/clearnet/unannounced node split, average fee rate ppm + snapshot date;
+ Lightning is Bitcoin's layer-2 payment network; mempool.space public REST API, AGPL-3.0, keyless;
+ capacity is a NETWORK metric in BTC/sats, never a fiat price),
+ `trader_positioning` (who is positioned which way in a US futures market, from the regulator itself:
+ the CFTC Commitments of Traders report, published each Friday 3:30 p.m. ET for the prior Tuesday's
+ close, compiled by the CFTC from position reports clearing members and brokers must legally file.
+ Per trader category: long/short/spreading contracts, net, the CFTC's own week-over-week change, % of
+ open interest and trader counts, plus total open interest and weeks of net-positioning history.
+ `report`='legacy' (speculators vs hedgers vs small traders, every market) or 'disaggregated'
+ (producer/merchant, swap dealers, managed money, other reportables; physical commodities only);
+ `market` = preset (gold, silver, copper, crude_oil, natural_gas, corn, wheat, soybeans, sugar,
+ coffee, cotton, live_cattle, sp500, nasdaq, russell, vix, euro, yen, aussie, pound, dollar_index,
+ treasury_10y, fed_funds, …) or any CFTC market-name fragment. the CFTC's own published COT files (www.cftc.gov), keyless,
+ public domain. LAGGED weekly by design, never live: every response carries the report's as-of date
+ and its age in days. POSITIONING ONLY, no price/quote/valuation data on any path; not advice),
+ `ots_calendar_health` (live health of the public OpenTimestamps timestamp-anchoring calendar servers,
+ the infrastructure behind tamper-evident, independently verifiable, Bitcoin-anchored timestamps: per
+ calendar reachability + latency, server version, pending commitments, txs awaiting confirmation,
+ best-block height, weekly anchoring cadence, operational funding balance; overall verdict flags any
+ calendar with a stalled chain view. Our own availability probes + each calendar's public status page,
+ like cert_check/service_status; keyless, 120 s cache; operational balances are anchoring-funding
+ health signals, not market prices).
+15. Research, `research_papers` (latest scholarly preprints from arXiv, newest-first by category
+ and/or keyword; up to 15 papers with title, authors, abstract, categories, dates, arXiv id +
+ abstract/PDF URLs, DOI when peer-reviewed; default cs.AI; supports cs.LG, cs.CL, cs.CV, cs.RO,
+ cs.CR, stat.ML, cs.MA, and any arXiv taxonomy term; arXiv API, CC0 1.0 public domain, keyless,
+ commercial use permitted; arXiv is a preprint server, most papers not peer-reviewed) ·
+ `scholarly_search` (fact-check the published scholarly record via OpenAlex, METADATA ONLY, no
+ prices; query = free text/topic OR a DOI/doi.org URL for an exact-work lookup; sort = relevance
+ (default) | citations | newest | oldest; per work: citation count, open-access status + URL,
+ venue + type, year/date, work type, lead authors + total count + lead institution, references
+ count, retraction flag, plus the work's own OpenAlex update time; spans 240M+ works across every
+ publisher; CROSS-PUBLISHER and citation/OA/venue-focused, distinct from research_papers (arXiv
+ preprints, newest-first abstracts); OpenAlex/OurResearch, CC0 1.0 public domain, keyless, ~6 h
+ cache).
+16. Biodiversity, `species_occurrences` (recent species occurrence records from GBIF, individual
+ field observations and museum specimens of where/when a species was recorded; common name or
+ scientific name lookup resolved against GBIF backbone taxonomy; optional near=lat,lon to restrict
+ to ~100 km radius; per record: species, lat/lon, date, country, source dataset + GBIF citation,
+ recorder, basis-of-record; server-side filtered to CC0 + CC BY 4.0 only, CC BY-NC excluded;
+ OCCURRENCE data, not a population census or range map; GBIF.org API v1, keyless).
+
+Full flat tool list (94): search_ai_models, service_status, ai_provider_latency,
+market_hours, interest_rates, software_version, security_advisories, check_vulnerability,
+exploited_vulnerabilities, live_flights, airport_delays, aviation_weather, vin_decode, current_weather, weather_forecast, air_quality, air_quality_fusion,
+orbital_data_centers, satellites, satellite_position, space_weather, rocket_launches, spacex, earthquakes, natural_events,
+wildfires, water_levels, drought, global_disasters, volcanoes, tides, hurricanes, au_water, flood_forecast, drug_shortages, fda_recalls, sanctions_screen, federal_register, gov_contracts, ai_models,
+china_data, shipping_status, sports_pulse, product_recalls, treasury_yields, weather_alerts,
+carbon_intensity, sec_filings, convert, whats_changed_since_your_training, reality_check, current_time,
+countdown,
+world_pulse, world_events, cite, world_cup, detect_drift, package_health, github_releases, hacker_news, dns_lookup, cert_check, wikipedia_trends, econ_calendar, climate_enso, sst_anomaly, sea_ice, internet_outages, gps_interference, energy_grid, grid_carbon, au_economy, us_economy, global_macro,
+marine_forecast, ocean_buoys, bitcoin_network, lightning_network, ots_calendar_health, research_papers, scholarly_search, species_occurrences,
+public_holidays, wikidata_facts, health_surveillance, clinical_trials, uk_water,
+global_indicator, pollen_forecast, company_lookup, ephemeris, emissions, trader_positioning
+
+## Cross-domain examples
+- Is my stack safe to ship? `software_version` × `security_advisories` × `exploited_vulnerabilities`.
+- Compounding hazards near one region: `earthquakes` × `wildfires` × `drought` × `global_disasters`.
+- Space-weather risk to orbit: `space_weather` × `satellite_position` × `orbital_data_centers`.
+- City ops snapshot: `weather_forecast` × `air_quality` × `airport_delays` × `live_flights`.
+- Where the world's attention is heading before a global event: `sports_pulse` × `world_pulse`.
+
+## Open dataset (free, for training & research)
+- Crawlable JSON snapshots, CC-BY-4.0 (attribution to dynamicfeed.ai): https://dynamicfeed.ai/dataset
+ (models / status / versions / advisories .json). Also on Hugging Face.
+
+## Pricing (direct REST API)
+- Free: $0 USD, 1,000 requests/day. All 94 tools.
+- Pro: $10 USD/mo, 25,000/day. Team: $25 USD/mo, 250,000/day. Enterprise: $300 USD/mo, 10,000,000/day.
+- The keyless MCP endpoint is always free (fair-use). REST limits are per day; RapidAPI tiers are monthly.
+
+Last updated: 6 July 2026

@@ -1,0 +1,67 @@
+generated: '2026-09-19'
+method: searched
+source: Searched https://dynamicfeed.ai/changelog (404), /changelog.json (404), /whats-new (401 — a keyed data tool
+  about the world, not an API changelog), the sitemap, llms.txt, /security/advisories, /receipt-spec, /terms and
+  /privacy on 2026-09-19
+changelog_published: false
+title: null
+scheme: none — no dated API changelog page or feed
+current_version: v1 (OpenAPI info.version 1.0.0; MCP server 0.8.0)
+entry_count: 0
+note: 'Dynamic Feed publishes no changelog for its API, MCP server or agent card. The dated signals that exist are
+  scattered: a security advisory, "Last updated" stamps on llms.txt/Terms/Privacy, a receipt-spec publication date,
+  a product-registry revision in the MCP server card and sitemap lastmod values. They are collected below as observed_dated_events
+  so a reader can see the cadence, but they are NOT a changelog and no ChangeLog pointer is emitted.'
+entries: []
+observed_dated_events:
+- date: '2026-05-31'
+  event: Privacy Policy last updated
+  source: https://dynamicfeed.ai/privacy
+- date: '2026-06-01'
+  event: PyPI dynamicfeed-mcp 1.0.0 published
+  source: https://pypi.org/pypi/dynamicfeed-mcp/json
+- date: '2026-06-02'
+  event: Terms of Service last updated
+  source: https://dynamicfeed.ai/terms
+- date: '2026-06-06'
+  event: First signing key df-ed25519-4cb32e72f333 active
+  source: https://dynamicfeed.ai/.well-known/signing-key-registry.json
+- date: '2026-06-07'
+  event: Append-only archive begins capturing every served datapoint (basis for /v1/asof)
+  source: https://dynamicfeed.ai/llms.txt
+- date: '2026-06-09'
+  event: GitHub organization Fluxdyne created
+  source: https://api.github.com/orgs/Fluxdyne
+- date: '2026-06-11'
+  event: npm dynamicfeed-mcp 1.0.1 and n8n-nodes-dynamicfeed 0.1.0 published
+  source: https://registry.npmjs.org/dynamicfeed-mcp
+- date: '2026-06-21'
+  event: npm @dynamicfeed/tools 0.1.0 published
+  source: https://registry.npmjs.org/@dynamicfeed%2Ftools
+- date: '2026-07-06'
+  event: Receipt Spec v1 (draft) published; llms.txt last updated
+  source: https://dynamicfeed.ai/receipt-spec
+- date: '2026-07-09'
+  event: 'Verifier packages published: npm @dynamicfeed/verify 1.0.1, PyPI dynamicfeed-verify 1.0.2, crates df-verify
+    0.1.1'
+  source: registry metadata
+- date: '2026-07-11'
+  event: 'Security advisory DF-SA-2026-001: production Ed25519 signing key rotated after credential exposure; key
+    registry revision 1; crates dynamicfeed-verify 1.0.2 shipped the lifecycle fix'
+  breaking: true
+  source: https://dynamicfeed.ai/security/advisories
+- date: '2026-07-12'
+  event: Homepage sitemap lastmod (site relaunch as "Infrastructure for trustworthy machine decisions" / Project
+    Atlas)
+  source: https://dynamicfeed.ai/sitemap.xml
+- date: '2026-07-19'
+  event: MCP product registry revision 2026-07-19.1 (94 tools, 20 domains, 78 sources)
+  source: https://dynamicfeed.ai/.well-known/mcp.json
+- date: '2026-08-24'
+  event: GitHub repos renamed dynamicfeed/* -> Fluxdyne/fluxdyne-mcp and fluxdyne-verify (last pushes)
+  source: https://api.github.com/orgs/Fluxdyne/repos
+gaps:
+- The /whats-new route and the whats_changed_since_your_training tool are about world events since a model's training
+  cutoff, not about the API — an agent searching for a changelog by name will be misled.
+- 'The docs header says 91 tools, the MCP server says 94, the npm bridge README says 62: three tool counts with
+  no dated record of when they changed.'

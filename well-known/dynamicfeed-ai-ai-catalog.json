@@ -1,0 +1,133 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Dynamic Feed",
+    "identifier": "https://dynamicfeed.ai",
+    "documentationUrl": "https://dynamicfeed.ai/docs",
+    "logoUrl": "https://dynamicfeed.ai/df-logo.png",
+    "trustManifest": {
+      "identity": "https://dynamicfeed.ai",
+      "identityType": "https",
+      "signing": {
+        "alg": "Ed25519",
+        "keys": "https://dynamicfeed.ai/.well-known/keys",
+        "canonicalization": "json-sorted-compact"
+      },
+      "reliability": {
+        "schema": "https://dynamicfeed.ai/schemas/okf-reliability-v1.json",
+        "rule": "signed is not verified; vantage states independence"
+      },
+      "timestamping": "RFC 3161",
+      "verifiers": {
+        "python": "dynamicfeed-verify (PyPI)",
+        "js": "@dynamicfeed/verify (npm)",
+        "rust": "dynamicfeed-verify (crates.io)"
+      },
+      "a2aProvenanceExtension": "https://dynamicfeed.ai/a2a/ext/provenance/v1",
+      "note": "Advisory trust metadata, not a certification. Tamper-evident, not tamper-proof."
+    }
+  },
+  "entries": [
+    {
+      "identifier": "urn:ai:dynamicfeed.ai:mcp:dynamic-feed",
+      "displayName": "Dynamic Feed: keyless live-data MCP server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://dynamicfeed.ai/.well-known/mcp/server-card.json",
+      "description": "Keyless Model Context Protocol server for live, verifiable real-world data. Every datapoint is returned in a provenance envelope (source, licence, exact measurement timestamp, age) and Ed25519-signed; records can be independently time-stamped by an independent RFC 3161 authority for proof-of-existence. Coverage includes weather and natural hazards, actively-exploited vulnerabilities (CISA KEV + EPSS), AI-model pricing, flights, satellites and orbital positioning, shipping and sanctions, internet and GPS integrity, and more, each verifiable against the published signing key.",
+      "capabilities": [
+        "live-data-retrieval",
+        "verifiable-provenance",
+        "ed25519-signing",
+        "rfc3161-timestamping",
+        "exploited-vulnerability-intelligence",
+        "weather-and-hazards",
+        "ai-model-pricing",
+        "geospatial-positioning"
+      ],
+      "representativeQueries": [
+        "What changed in the world since my training cutoff?",
+        "Does this software package and version have a known CVE?",
+        "What is the live weather, forecast, or air quality at a location?",
+        "Which CVEs are being actively exploited right now?",
+        "Where is this satellite, flight, or vessel right now?"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-06-18T00:00:00Z",
+      "metadata": {
+        "keyless": true,
+        "signing_alg": "Ed25519",
+        "signing_keys": "https://dynamicfeed.ai/.well-known/keys",
+        "verifier": "https://dynamicfeed.ai/proof",
+        "rfc3161_timestamping": true
+      },
+      "trustManifest": {
+        "identity": "https://dynamicfeed.ai",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:ai:dynamicfeed.ai:api:rest",
+      "displayName": "Dynamic Feed REST API (OpenAPI)",
+      "type": "application/vnd.oai.openapi+json",
+      "url": "https://dynamicfeed.ai/openapi.json",
+      "description": "REST interface to the same live, signed data layer. Batch-fetch many datapoints in one call via POST /v1/batch, or call per-feed endpoints. Includes a signed go/caution/no-go situational-awareness verdict for robots and agents at a location. Optional X-API-Key; every response is Ed25519-signed and verifies against /.well-known/keys.",
+      "capabilities": [
+        "live-data-retrieval",
+        "verifiable-provenance",
+        "batch-queries",
+        "robot-situational-awareness"
+      ],
+      "representativeQueries": [
+        "Batch-fetch multiple live signed datapoints in one call",
+        "Get a signed go/caution/no-go awareness verdict for a robot at a location"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-06-18T00:00:00Z",
+      "metadata": {
+        "signing_alg": "Ed25519",
+        "signing_keys": "https://dynamicfeed.ai/.well-known/keys",
+        "batch_endpoint": "https://dynamicfeed.ai/v1/batch"
+      },
+      "trustManifest": {
+        "identity": "https://dynamicfeed.ai",
+        "identityType": "https"
+      }
+    },
+    {
+      "identifier": "urn:ai:dynamicfeed.ai:api:witness",
+      "displayName": "Dynamic Feed Witness: signed receipts for machine-to-machine transactions",
+      "type": "application/vnd.oai.openapi+json",
+      "url": "https://dynamicfeed.ai/openapi.json",
+      "description": "A neutral third-party WITNESS for agent-to-agent transactions. POST /v1/witness records a transaction (or just its sha256) as an Ed25519-signed, transparency-logged receipt (txn-receipt/v1) whose hash is time-stamped by an independent RFC 3161 authority and which any party can verify against /.well-known/keys. Dynamic Feed sits BESIDE the transaction and NEVER in the value path. It signs and time-stamps a hash; it never moves, holds, routes or custodies funds. An optional agent co-signature proves which agent key attested. Keyless sample at GET /v1/witness/sample; in-browser verify at /witness.",
+      "capabilities": [
+        "transaction-receipts",
+        "machine-to-machine-audit-trail",
+        "ed25519-signing",
+        "rfc3161-timestamping",
+        "agent-identity-attestation",
+        "tamper-evident-record"
+      ],
+      "representativeQueries": [
+        "Witness an agent-to-agent transaction and return a signed receipt",
+        "Prove which AI model actually answered a request (ProofOfModel inference receipt)",
+        "Get a black-box receipt for a robot decision, or a notarized un-retunable eval run",
+        "Get a tamper-evident, RFC 3161 time-stamped audit trail for agent activity"
+      ],
+      "version": "1.0",
+      "updatedAt": "2026-06-20T00:00:00Z",
+      "metadata": {
+        "endpoint": "https://dynamicfeed.ai/v1/witness",
+        "sample": "https://dynamicfeed.ai/v1/witness/sample",
+        "schema": "https://dynamicfeed.ai/schemas/txn-receipt-v1.json",
+        "demo": "https://dynamicfeed.ai/witness",
+        "signing_keys": "https://dynamicfeed.ai/.well-known/keys",
+        "money_path": false,
+        "note": "Witness and receipt rail, not a payment rail. Never moves or custodies funds."
+      },
+      "trustManifest": {
+        "identity": "https://dynamicfeed.ai",
+        "identityType": "https"
+      }
+    }
+  ]
+}

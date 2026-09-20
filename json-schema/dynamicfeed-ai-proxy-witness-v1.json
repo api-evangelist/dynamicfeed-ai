@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/proxy-witness-v1.json",
+  "title": "DF-VERIFY/1 — proxy-witness/v1 profile (receipts for any API)",
+  "description": "A signed, tamper-evident record of exactly what a third-party URL returned to Dynamic Feed at a moment, produced by POST /v1/proxy-witness. DF fetches the URL server-side under an SSRF guard, redacts the caller's request credentials, and signs the response's status, content-type, size and SHA-256. The body is only present when the caller set echo:true, and it is never retained in Dynamic Feed's archive. SCOPE: attests what the URL returned to DF, NOT that the content is accurate and NOT who operates the API. Detached Ed25519 signature over the object minus its `signature`, json-sorted-compact; independently time-stampable by an independent RFC 3161 authority via /v1/anchor. Advisory evidence, not a certification.",
+  "type": "object",
+  "required": ["schema", "issuer", "witnessed_at", "request", "response", "signature"],
+  "additionalProperties": true,
+  "properties": {
+    "schema": { "const": "proxy-witness/v1" },
+    "issuer": { "type": "string" },
+    "witnessed_at": { "type": "string", "format": "date-time", "description": "when Dynamic Feed fetched the URL" },
+    "subject": { "type": "string", "description": "opaque caller id, MUST NOT contain PII" },
+    "request": {
+      "type": "object",
+      "required": ["url", "method", "host"],
+      "description": "what was requested; request credentials are redacted and never stored",
+      "properties": {
+        "url": { "type": "string", "format": "uri" },
+        "method": { "type": "string" },
+        "host": { "type": "string" },
+        "port": { "type": "integer" }
+      }
+    },
+    "response": {
+      "type": "object",
+      "required": ["status", "size_bytes", "sha256"],
+      "description": "what the URL returned to Dynamic Feed",
+      "properties": {
+        "status": { "type": "integer", "description": "HTTP status code as returned" },
+        "content_type": { "type": ["string", "null"] },
+        "size_bytes": { "type": "integer" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of the exact response body" },
+        "final_url": { "type": "string" },
+        "redirected": { "type": "boolean" },
+        "headers": { "type": "object", "description": "response headers minus set-cookie" },
+        "body": { "type": "string", "description": "present only when the caller set echo:true; never stored in the DF archive" }
+      }
+    },
+    "note": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "required": ["alg", "key_id", "sig"],
+      "properties": {
+        "alg": { "const": "Ed25519" },
+        "key_id": { "type": "string" },
+        "sig": { "type": "string" }
+      }
+    }
+  }
+}

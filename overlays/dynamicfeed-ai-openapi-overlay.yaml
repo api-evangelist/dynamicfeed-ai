@@ -1,0 +1,125 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Dynamic Feed API
+  version: 1.0.0
+extends: ../openapi/dynamicfeed-ai-openapi.yml
+x-generated: '2026-09-19'
+x-method: generated
+x-source: Generated from the searched artifacts in this repo (llms.txt, /docs, /.well-known/*, live probes) without
+  mutating the provider contract at openapi/_original/dynamicfeed-ai-openapi.json.
+actions:
+- target: $.info
+  description: Link the provider's own machine-readable discovery surface from the contract.
+  update:
+    x-llms-txt: https://dynamicfeed.ai/llms.txt
+    x-onboard: https://dynamicfeed.ai/v1/onboard
+    x-mcp-endpoint: https://dynamicfeed.ai/mcp
+    x-mcp-server-card: https://dynamicfeed.ai/.well-known/mcp.json
+    x-a2a-agent-card: https://dynamicfeed.ai/.well-known/agent-card.json
+    x-ai-catalog: https://dynamicfeed.ai/.well-known/ai-catalog.json
+    x-status-page: https://dynamicfeed.ai/uptime
+    x-status-json: https://dynamicfeed.ai/status.json
+    x-signing-keys: https://dynamicfeed.ai/.well-known/keys
+    x-signing-key-registry: https://dynamicfeed.ai/.well-known/signing-key-registry.json
+    x-verification-standard: https://dynamicfeed.ai/standard
+    x-receipt-schemas: https://dynamicfeed.ai/schemas/index.json
+    x-x402-catalog: https://dynamicfeed.ai/v1/pro/catalog
+- target: $.info
+  description: Record the access policy the docs publish, since the contract declares no securitySchemes.
+  update:
+    x-access-policy:
+    - interface: MCP /mcp
+      access: keyless
+      limit: no per-key quota; fair-use
+    - interface: REST batch POST /v1/batch
+      access: keyless
+      limit: 20 calls per request
+    - interface: direct REST keyed routes
+      access: X-API-Key
+      limit: plan daily quota
+    - interface: x402 /v1/pro/*
+      access: x402 payment
+      limit: per-call terms on HTTP 402
+- target: $.components
+  description: Declare the API-key scheme the operations actually use (they model it as an optional x-api-key header
+    parameter).
+  update:
+    securitySchemes:
+      ApiKeyHeader:
+        type: apiKey
+        in: header
+        name: X-API-Key
+        description: Free key from POST /signup. Required on per-user routes (/v1/me, /v1/watchlist, /v1/webhooks,
+          /status, /whats-new) and direct feed GETs; optional everywhere else.
+- target: $.paths['/v1/me'].get
+  description: Mark the per-user operations as key-required.
+  update:
+    security:
+    - ApiKeyHeader: []
+- target: $.paths['/v1/watchlist'].*
+  update:
+    security:
+    - ApiKeyHeader: []
+- target: $.paths['/v1/webhooks'].*
+  update:
+    security:
+    - ApiKeyHeader: []
+- target: $.paths['/v1/webhooks/test'].post
+  update:
+    security:
+    - ApiKeyHeader: []
+- target: $.paths['/v1/pro/tool/{tool}'].post
+  description: Document the observed 402 x402 quote on the paid routes.
+  update:
+    responses:
+      '402':
+        description: x402 payment required — body carries x402Version, accepts[] (scheme exact, network base, maxAmountRequired
+          1000 = 0.001 USDC, payTo) and the bazaar discovery extension.
+- target: $.paths['/v1/pro/batch'].post
+  update:
+    responses:
+      '402':
+        description: x402 payment required (see /v1/pro/tool/{tool}).
+- target: $.paths['/v1/pro/asof'].post
+  update:
+    responses:
+      '402':
+        description: x402 payment required (see /v1/pro/tool/{tool}).
+- target: $.paths['/v1/vc'].post
+  description: The provider states this route is quarantined.
+  update:
+    deprecated: true
+    x-status: DISABLED_SECURITY_QUARANTINE — returns 503 per llms.txt and the agent card
+- target: $.paths['/status'].get
+  description: Observed live 2026-09-19.
+  update:
+    responses:
+      '401':
+        description: '{"detail":"Missing API key. Get a free one at POST /signup, then send it as the ''X-API-Key''
+          header."}'
+- target: $.paths['/v1/webhooks'].post
+  description: Record the delivery signature contract.
+  update:
+    x-webhook-signature:
+      header: X-DynamicFeed-Signature
+      scheme: HMAC-SHA256
+      format: sha256=<hex>
+      secret: one-time secret returned by this operation
+- target: $.tags
+  description: Declare the seven tags the operations use (the source declares none) so per-tag splitting has names
+    to bind to.
+  update:
+  - name: agent
+    description: 'The /v1 agent surface: batch, discovery, receipts, notary, watchlist, webhooks, stream.'
+  - name: robot
+    description: Situational-awareness verdicts and RFC 3161 anchoring for embodied agents.
+  - name: verified facts
+    description: Canonical, reliability-graded, signed facts.
+  - name: weather
+    description: Multi-model weather passthroughs.
+  - name: security
+    description: Package and vulnerability health.
+  - name: dev
+    description: Developer ecosystem feeds.
+  - name: sports
+    description: Sports and events.

@@ -1,0 +1,561 @@
+generated: '2026-09-19'
+method: searched
+source: https://dynamicfeed.ai/schemas/index.json and the 15 JSON Schema documents it links (saved under json-schema/),
+  https://dynamicfeed.ai/receipt-spec, the response envelope observed on POST /v1/batch, and openapi/_original/dynamicfeed-ai-openapi.json
+summary: 'The REST contract is schema-less on the response side: all 158 operations declare `{}` for 200 and the
+  only component schemas are the signup body and the FastAPI validation error, so no entity graph can be derived
+  from the OpenAPI. Dynamic Feed publishes its data model elsewhere — as a family of 14 JSON Schema receipt profiles
+  (DF-VERIFY/1) plus the OKF reliability object, and as a uniform response envelope (data + provenance + freshness
+  + signature + served_by). That published model is recorded here; nothing was invented to fill the OpenAPI gap.'
+openapi_schemas:
+  count: 3
+  names:
+  - Body_signup_signup_post
+  - HTTPValidationError
+  - ValidationError
+  response_schemas_declared: 0
+envelope:
+  name: signed response envelope
+  fields:
+  - name: data
+    type: object
+    description: Tool-specific payload.
+  - name: provenance
+    type: object
+    fields:
+    - source
+    - source_url
+    - measured_at
+    - license
+    - age_seconds
+    cardinality: one per datapoint
+  - name: freshness
+    type: object
+    fields:
+    - state
+    - confidence
+    - observed_at
+    - age_seconds
+    - max_age_seconds
+    - reason
+  - name: signature
+    type: object
+    fields:
+    - alg
+    - key_id
+    - canonicalization
+    - sig
+    references: key_id -> /.well-known/keys and /.well-known/signing-key-registry.json
+  - name: served_by
+    type: object
+    fields:
+    - provider
+    - url
+    - verify
+    - verify_scope
+    - key_lifecycle
+    - facts
+    - mcp
+    - docs
+  - name: reliability
+    type: object
+    schema: okf-reliability-v1
+    fields:
+    - confidence
+    - basis
+    - score
+    - sources
+    - verified
+    - vantage
+    - conflict
+    - validity
+    present_when: facts mode (POST /v1/batch with facts:true, /v1/facts, /v1/answer)
+id_style:
+  format: opaque hex / integer index
+  examples:
+    snapshot_id: 32-hex (awareness snapshots)
+    notary idx: integer position in the append-only log
+    key_id: df-ed25519-<12 hex>
+    checkpoint day: YYYY-MM-DD
+  prefixes_published: true
+  note: Signing keys are prefixed df-ed25519-; API keys observed with an amd_ prefix on the dashboard placeholder.
+entities:
+- name: Receipt profile (attestation-v1)
+  vocabulary_id: attestation-v1
+  schema_file: json-schema/dynamicfeed-ai-attestation-v1.json
+  title: DF-VERIFY/1 — attestation/v1 profile (parametric trigger)
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - trigger
+  - observed
+  - met
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - trigger
+  - observed
+  - met
+  - note
+  - signature
+  minted_by: signed feed attestation
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (awareness-v1)
+  vocabulary_id: awareness-v1
+  schema_file: json-schema/dynamicfeed-ai-awareness-v1.json
+  title: DF-VERIFY/1 — awareness/v1 profile
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - snapshot_id
+  - issued_at
+  - verdict
+  - degraded
+  - signature
+  properties:
+  - schema
+  - issuer
+  - snapshot_id
+  - issued_at
+  - robot
+  - location
+  - verdict
+  - facts
+  - freshness
+  - degraded
+  - degraded_sources
+  - note
+  - signature
+  minted_by: POST /v1/awareness
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (delivery-receipt-v1)
+  vocabulary_id: delivery-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-delivery-receipt-v1.json
+  title: DF-VERIFY/1 — delivery-receipt/v1 (proof of delivery for agent commerce)
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - resource
+  - result_sha256
+  - settlement
+  - signature
+  properties:
+  - schema
+  - type
+  - profile
+  - proves
+  - issuer
+  - issued_at
+  - resource
+  - args_sha256
+  - result_sha256
+  - price
+  - settlement
+  - note
+  - verify
+  - schema_url
+  - signature
+  minted_by: x402 fulfillment
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (eval-receipt-v1)
+  vocabulary_id: eval-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-eval-receipt-v1.json
+  title: Dynamic Feed eval-receipt/v1
+  draft: http://json-schema.org/draft-07/schema#
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - transparency
+  - signature
+  minted_by: POST /v1/eval-receipt
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (ground-truth-vc-v1)
+  vocabulary_id: ground-truth-vc-v1
+  schema_file: json-schema/dynamicfeed-ai-ground-truth-vc-v1.json
+  title: DF-VERIFY/1 — GroundTruthReceipt Verifiable Credential profile
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - '@context'
+  - type
+  - issuer
+  - validFrom
+  - credentialSubject
+  - signature
+  properties:
+  - '@context'
+  - type
+  - issuer
+  - validFrom
+  - credentialSubject
+  - note
+  - signature
+  minted_by: null
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (inference-receipt-v1)
+  vocabulary_id: inference-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-inference-receipt-v1.json
+  title: Dynamic Feed — inference-receipt/v1
+  draft: http://json-schema.org/draft-07/schema#
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - transparency
+  - signature
+  minted_by: POST /v1/inference-receipt
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (intensity-v1)
+  vocabulary_id: intensity-v1
+  schema_file: json-schema/dynamicfeed-ai-intensity-v1.json
+  title: DF-VERIFY/1 — intensity/v1 profile (parametric intensity-at-location)
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - peril
+  - value
+  - unit
+  - location
+  - observation
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - peril
+  - query
+  - value
+  - unit
+  - all_metrics
+  - location
+  - latency_tier
+  - interpolation_method
+  - observation
+  - note
+  - signature
+  minted_by: grid carbon intensity
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (proxy-witness-v1)
+  vocabulary_id: proxy-witness-v1
+  schema_file: json-schema/dynamicfeed-ai-proxy-witness-v1.json
+  title: DF-VERIFY/1 — proxy-witness/v1 profile (receipts for any API)
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - witnessed_at
+  - request
+  - response
+  - signature
+  properties:
+  - schema
+  - issuer
+  - witnessed_at
+  - subject
+  - request
+  - response
+  - note
+  - signature
+  minted_by: POST /v1/proxy-witness
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (receipt-v1)
+  vocabulary_id: receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-receipt-v1.json
+  title: DF-VERIFY/1 — receipt/v1 profile
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - note
+  - signature
+  minted_by: generic signed receipt
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (robot-receipt-v1)
+  vocabulary_id: robot-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-robot-receipt-v1.json
+  title: Dynamic Feed — robot-receipt/v1
+  draft: http://json-schema.org/draft-07/schema#
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - transparency
+  - signature
+  minted_by: POST /v1/robot-receipt
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (station-receipt-v1)
+  vocabulary_id: station-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-station-receipt-v1.json
+  title: DF-VERIFY/1 — station-receipt/v1 profile (We Sign Your Station)
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - witnessed_at
+  - station
+  - observation
+  - signature
+  properties:
+  - schema
+  - issuer
+  - witnessed_at
+  - station
+  - observation
+  - provenance
+  - note
+  - signature
+  - concordance
+  minted_by: POST /v1/station/reading
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (trigger-receipt-v1)
+  vocabulary_id: trigger-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-trigger-receipt-v1.json
+  title: DF-VERIFY/1 — trigger-receipt/v1 profile (parametric catastrophe settlement)
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - trigger_definition
+  - observation
+  - determination
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - peril
+  - contract_ref
+  - trigger_definition
+  - observation
+  - determination
+  - freshness
+  - note
+  - signature
+  minted_by: GET /v1/trigger-receipt
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (trust-receipt-v1)
+  vocabulary_id: trust-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-trust-receipt-v1.json
+  title: Dynamic Feed Trust Receipt v1 envelope
+  draft: https://json-schema.org/draft/2020-12/schema
+  required:
+  - receipt
+  - payload_sha256
+  - signature
+  properties:
+  - receipt
+  - payload_sha256
+  - signature
+  minted_by: null
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+- name: Receipt profile (txn-receipt-v1)
+  vocabulary_id: txn-receipt-v1
+  schema_file: json-schema/dynamicfeed-ai-txn-receipt-v1.json
+  title: Dynamic Feed txn-receipt/v1
+  draft: http://json-schema.org/draft-07/schema#
+  required:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - signature
+  properties:
+  - schema
+  - issuer
+  - issued_at
+  - data
+  - transparency
+  - signature
+  minted_by: agent transaction
+  relationships:
+  - belongs_to: SigningKey
+    via: signature.key_id
+  - has_one: NotaryLogEntry
+    via: transparency / idx (where the profile carries a transparency block)
+supporting_entities:
+- name: SigningKey
+  source: /.well-known/signing-key-registry.json
+  fields:
+  - key_id
+  - alg
+  - use
+  - fingerprint_sha256
+  - status (active|compromised)
+  - custody_class
+  - first_used_at
+  - active_from
+  - retired_at
+  - compromised_after
+  relationships:
+  - has_many: Receipt profile
+    via: signature.key_id
+- name: NotaryLogEntry
+  source: GET /v1/notary/log/{idx}
+  fields:
+  - idx
+  - witnessed_at
+  - payload_sha256
+  - mode
+  - subject
+  - entry_hash
+  - prev_hash
+  relationships:
+  - belongs_to: Checkpoint
+    via: day
+- name: Checkpoint
+  source: GET /v1/checkpoints
+  fields:
+  - day
+  - digest_sha256
+  - prev_digest
+  - object_count
+  - 'counts{tool: n}'
+  relationships:
+  - has_many: NotaryLogEntry
+    via: day
+  - has_one: Checkpoint
+    via: prev_digest (chain)
+- name: Tool
+  source: MCP tools/list; /.well-known/mcp.json product_registry
+  fields:
+  - name
+  - title
+  - description
+  - inputSchema
+  count: 94
+  relationships:
+  - belongs_to: Collection
+    via: product_registry.collections
+  - has_many: Source
+    via: /v1/explain?subject=
+- name: Source
+  source: GET /v1/sources
+  fields:
+  - name
+  - licence
+  - official_url
+  - update_cadence
+  - commercial_use
+  count: 78
+- name: Bundle
+  source: GET /v1/bundles
+  fields:
+  - id
+  - name
+  - description
+  - tools[]
+  - tool_count
+  count: 10
+- name: Webhook
+  source: POST /v1/webhooks
+  fields:
+  - url
+  - tool
+  - args
+  - secret (one-time)
+- name: WatchlistItem
+  source: POST /v1/watchlist
+  fields:
+  - label
+  - tool
+  - args
+- name: ApiKey
+  source: POST /signup; GET /v1/me
+  fields:
+  - api_key
+  - plan
+  - calls_today
+  - daily_quota
+  - remaining
+render: null

@@ -1,0 +1,1332 @@
+generated: '2026-09-19'
+method: derived
+source: Derived by binding the live MCP tools/list (mcp/dynamicfeed-ai-mcp-tools-list.json, 94 tools, probed 2026-09-19)
+  and the eight A2A skills (a2a/dynamicfeed-ai-agent-card.json) to the REST OpenAPI at openapi/_original/dynamicfeed-ai-openapi.json
+  (158 operations). Bindings use the provider's own statement that "/v1/batch ... Tool names are the keyless MCP
+  tools" plus the legacy per-feed GET routes whose paths match the tool names.
+purpose: 'Make the MCP tool the discovery unit and bind it to its backing REST operation. Dynamic Feed is unusual:
+  the REST contract declares NO response schemas ({} everywhere) while the MCP tools/list carries a real inputSchema
+  per tool, so for parameters the MCP schema is the stronger contract and the REST spec is the weaker one — the
+  reverse of the usual direction.'
+surfaces:
+  rest_openapi: openapi/dynamicfeed-ai-openapi.yml (source openapi/_original/dynamicfeed-ai-openapi.json; 148 paths,
+    158 operations, 3 component schemas, no securitySchemes)
+  mcp: https://dynamicfeed.ai/mcp (keyless; live tools/list succeeded, not gated)
+  a2a: https://dynamicfeed.ai/a2a (8 skills whose examples are MCP tool invocations)
+  graphql: null
+coverage:
+  mcp_tools: 94
+  tools_with_dedicated_rest_route: 57
+  tools_reachable_only_via_batch_dispatch: 37
+  rest_operations: 155
+  rest_operations_bound_to_a_tool: 59
+  rest_only_operations: 96
+crosswalk:
+- tool: search_ai_models
+  category: feed
+  rest:
+  - models_models_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - provider
+  - max_input_price
+  - min_context
+  - needs_vision
+  - limit
+  note: Direct route /models plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/search_ai_models).
+- tool: airport_delays
+  category: feed
+  rest:
+  - airport_delays_airport_delays_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - airport
+  - limit
+  note: Direct route /airport-delays plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/airport_delays).
+- tool: drug_shortages
+  category: feed
+  rest:
+  - drug_shortages_drug_shortages_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - limit
+  note: Direct route /drug-shortages plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/drug_shortages).
+- tool: sanctions_screen
+  category: feed
+  rest:
+  - sanctions_screen_sanctions_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - name
+  - program
+  - limit
+  note: Direct route /sanctions plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/sanctions_screen).
+- tool: company_lookup
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - query
+  - lei
+  - country
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"company_lookup","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: ephemeris
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  - date
+  - tz
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"ephemeris","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: emissions
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - country
+  - year
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"emissions","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: federal_register
+  category: feed
+  rest:
+  - federal_register_federal_register_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - doc_type
+  - agency
+  - days
+  - limit
+  note: Direct route /federal-register plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/federal_register).
+- tool: drought
+  category: feed
+  rest:
+  - drought_drought_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - area
+  - weeks
+  note: Direct route /drought plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/drought).
+- tool: water_levels
+  category: feed
+  rest:
+  - water_levels_water_levels_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - state
+  - site
+  - limit
+  note: Direct route /water-levels plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/water_levels).
+- tool: sports_pulse
+  category: feed
+  rest:
+  - sports_sports_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - topic
+  - days
+  - lang
+  note: Direct route /sports plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/sports_pulse).
+- tool: world_cup
+  category: feed
+  rest:
+  - worldcup_route_worldcup_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - upcoming
+  - recent
+  note: Direct route /worldcup plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/world_cup).
+- tool: product_recalls
+  category: feed
+  rest:
+  - recalls_recalls_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - category
+  - limit
+  note: Direct route /recalls plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/product_recalls).
+- tool: treasury_yields
+  category: feed
+  rest:
+  - treasury_yields_treasury_yields_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys: []
+  note: Direct route /treasury-yields plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/treasury_yields).
+- tool: weather_alerts
+  category: feed
+  rest:
+  - weather_alerts_weather_alerts_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - area
+  - event
+  - limit
+  note: Direct route /weather-alerts plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/weather_alerts).
+- tool: carbon_intensity
+  category: feed
+  rest:
+  - carbon_intensity_carbon_intensity_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys: []
+  note: Direct route /carbon-intensity plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/carbon_intensity).
+- tool: sec_filings
+  category: feed
+  rest:
+  - sec_filings_sec_filings_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - ticker
+  - form
+  - limit
+  note: Direct route /sec-filings plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/sec_filings).
+- tool: ai_models
+  category: feed
+  rest:
+  - ai_models_ep_ai_models_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - org
+  - task
+  - sort
+  - limit
+  note: Direct route /ai-models plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/ai_models).
+- tool: service_status
+  category: feed
+  rest:
+  - status_status_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - category
+  - only_issues
+  - limit
+  note: Direct route /status plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/service_status).
+- tool: ai_provider_latency
+  category: feed
+  rest:
+  - benchmarks_benchmarks_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - window_hours
+  note: Direct route /benchmarks plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/ai_provider_latency).
+- tool: software_version
+  category: feed
+  rest:
+  - versions_versions_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - product
+  - query
+  - category
+  - only_supported
+  - only_lts
+  - limit
+  note: Direct route /versions plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/software_version).
+- tool: security_advisories
+  category: feed
+  rest:
+  - advisories_advisories_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - package
+  - ecosystem
+  - severity
+  - min_cvss
+  - limit
+  note: Direct route /advisories plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/security_advisories).
+- tool: market_hours
+  category: feed
+  rest:
+  - market_hours_market_hours_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - market
+  note: Direct route /market-hours plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/market_hours).
+- tool: interest_rates
+  category: feed
+  rest:
+  - rates_rates_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys: []
+  note: Direct route /rates plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/interest_rates).
+- tool: satellites
+  category: feed
+  rest:
+  - satellites_satellites_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - group
+  - limit
+  note: Direct route /satellites plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/satellites).
+- tool: satellite_position
+  category: feed
+  rest:
+  - satellite_satellite_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - norad_id
+  - name
+  - track_minutes
+  - step_seconds
+  note: Direct route /satellite plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/satellite_position).
+- tool: rocket_launches
+  category: feed
+  rest:
+  - launches_launches_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - window
+  - limit
+  note: Direct route /launches plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/rocket_launches).
+- tool: gov_contracts
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - agency
+  - recipient
+  - keyword
+  - award_type
+  - min_amount
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"gov_contracts","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: spacex
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys: []
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"spacex","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: orbital_data_centers
+  category: feed
+  rest:
+  - orbital_datacenters_orbital_datacenters_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys: []
+  note: Direct route /orbital-datacenters plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/orbital_data_centers).
+- tool: space_weather
+  category: feed
+  rest:
+  - space_weather_space_weather_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys: []
+  note: Direct route /space-weather plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/space_weather).
+- tool: internet_outages
+  category: feed
+  rest:
+  - internet_outages_internet_outages_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - resource
+  note: Direct route /internet-outages plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/internet_outages).
+- tool: gps_interference
+  category: feed
+  rest:
+  - gps_interference_gps_interference_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - region
+  - lat
+  - lon
+  - radius_km
+  note: Direct route /gps-interference plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/gps_interference).
+- tool: energy_grid
+  category: feed
+  rest:
+  - energy_grid_energy_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - region
+  - metric
+  note: Direct route /energy plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/energy_grid).
+- tool: global_macro
+  category: feed
+  rest:
+  - global_macro_macro_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - country
+  - indicator
+  note: Direct route /macro plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/global_macro).
+- tool: earthquakes
+  category: feed
+  rest:
+  - earthquakes_earthquakes_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - min_magnitude
+  - period
+  - limit
+  - tsunami_only
+  note: Direct route /earthquakes plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/earthquakes).
+- tool: natural_events
+  category: feed
+  rest:
+  - natural_events_natural_events_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - category
+  - days
+  - limit
+  note: Direct route /natural-events plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/natural_events).
+- tool: wildfires
+  category: feed
+  rest:
+  - wildfires_wildfires_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - state
+  - only_uncontained
+  - min_acres
+  - limit
+  note: Direct route /wildfires plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/wildfires).
+- tool: global_disasters
+  category: feed
+  rest:
+  - global_disasters_ep_global_disasters_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - alert_level
+  - event_type
+  - country
+  - days
+  - limit
+  note: Direct route /global-disasters plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/global_disasters).
+- tool: volcanoes
+  category: feed
+  rest:
+  - volcanoes_ep_volcanoes_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - status
+  - limit
+  note: Direct route /volcanoes plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/volcanoes).
+- tool: tides
+  category: feed
+  rest:
+  - tides_ep_tides_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - station
+  - location
+  - units
+  - limit
+  note: Direct route /tides plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/tides).
+- tool: exploited_vulnerabilities
+  category: feed
+  rest:
+  - exploited_vulnerabilities_exploited_vulnerabilities_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - vendor
+  - product
+  - stack
+  - ransomware_only
+  - recent_days
+  - sort
+  - limit
+  note: Direct route /exploited-vulnerabilities plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/exploited_vulnerabilities).
+- tool: live_flights
+  category: feed
+  rest:
+  - flights_flights_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - region
+  - callsign
+  - limit
+  note: Direct route /flights plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/live_flights).
+- tool: current_weather
+  category: feed
+  rest:
+  - weather_weather_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - city
+  - lat
+  - lon
+  note: Direct route /weather plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/current_weather).
+- tool: weather_forecast
+  category: feed
+  rest:
+  - forecast_forecast_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - city
+  - lat
+  - lon
+  - days
+  note: Direct route /forecast plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/weather_forecast).
+- tool: air_quality
+  category: feed
+  rest:
+  - air_quality_air_quality_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - city
+  - lat
+  - lon
+  note: Direct route /air-quality plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/air_quality).
+- tool: check_vulnerability
+  category: feed
+  rest:
+  - advisories_check_advisories_check_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - package
+  - version
+  - ecosystem
+  note: Direct route /advisories/check plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/check_vulnerability).
+- tool: china_data
+  category: feed
+  rest:
+  - china_ep_china_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - metric
+  note: Direct route /china plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/china_data).
+- tool: shipping_status
+  category: feed
+  rest:
+  - shipping_ep_shipping_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - scope
+  - query
+  - region
+  - limit
+  note: Direct route /shipping plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/shipping_status).
+- tool: whats_changed_since_your_training
+  category: feed
+  rest:
+  - whats_new_ep_whats_new_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - cutoff
+  note: Direct route /whats-new plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/whats_changed_since_your_training).
+- tool: reality_check
+  category: feed
+  rest:
+  - reality_check_ep_reality_check_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - claim
+  note: Direct route /reality-check plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/reality_check).
+- tool: detect_drift
+  category: v1
+  rest:
+  - v1_drift_v1_drift_post
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - claims
+  - text
+  note: Direct route /v1/drift plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/detect_drift).
+- tool: current_time
+  category: feed
+  rest:
+  - time_ep_time_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - tz
+  note: Direct route /time plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/current_time).
+- tool: convert
+  category: feed
+  rest:
+  - convert_ep_convert_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - amount
+  - from_currency
+  - to_currency
+  note: Direct route /convert plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/convert).
+- tool: countdown
+  category: feed
+  rest:
+  - countdown_ep_countdown_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - event
+  note: Direct route /countdown plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/countdown).
+- tool: world_pulse
+  category: feed
+  rest:
+  - world_pulse_ep_world_pulse_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys: []
+  note: Direct route /world-pulse plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/world_pulse).
+- tool: cite
+  category: feed
+  rest:
+  - cite_ep_cite_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - subject
+  note: Direct route /cite plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/cite).
+- tool: package_health
+  category: feed
+  rest:
+  - package_health_ep_package_health_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - package
+  - ecosystem
+  - version
+  note: Direct route /package-health plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/package_health).
+- tool: github_releases
+  category: feed
+  rest:
+  - github_releases_ep_github_releases_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - repo
+  - limit
+  note: Direct route /github-releases plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/github_releases).
+- tool: hacker_news
+  category: feed
+  rest:
+  - hacker_news_ep_hacker_news_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - query
+  - kind
+  - limit
+  note: Direct route /hacker-news plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/hacker_news).
+- tool: dns_lookup
+  category: feed
+  rest:
+  - dns_ep_dns_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - name
+  - type
+  note: Direct route /dns plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/dns_lookup).
+- tool: cert_check
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - domain
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"cert_check","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: wikipedia_trends
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - topic
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"wikipedia_trends","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: econ_calendar
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - days
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"econ_calendar","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: climate_enso
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - seasons
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"climate_enso","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: sst_anomaly
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - lat
+  - lon
+  - region
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"sst_anomaly","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: sea_ice
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - region
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"sea_ice","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: world_events
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - query
+  - region
+  - hours
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"world_events","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: grid_carbon
+  category: v1
+  rest:
+  - v1_intensity_v1_intensity_get
+  - v1_batch_v1_batch_post
+  binding: rest
+  confidence: high
+  input_schema_keys:
+  - region
+  note: Direct route /v1/intensity plus dispatch by name through POST /v1/batch (and paid POST /v1/pro/tool/grid_carbon).
+- tool: au_economy
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - indicator
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"au_economy","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: us_economy
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - indicator
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"us_economy","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: scholarly_search
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - query
+  - sort
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"scholarly_search","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: fda_recalls
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - category
+  - query
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"fda_recalls","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: air_quality_fusion
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"air_quality_fusion","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: au_water
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  - kind
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"au_water","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: flood_forecast
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"flood_forecast","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: aviation_weather
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - station
+  - kind
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"aviation_weather","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: hurricanes
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - basin
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"hurricanes","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: bitcoin_network
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - metric
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"bitcoin_network","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: lightning_network
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys: []
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"lightning_network","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: ots_calendar_health
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - calendar
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"ots_calendar_health","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: vin_decode
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - vin
+  - model_year
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"vin_decode","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: trader_positioning
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - market
+  - report
+  - weeks
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"trader_positioning","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: marine_forecast
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"marine_forecast","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: ocean_buoys
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - station
+  - near
+  - limit
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"ocean_buoys","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: research_papers
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - category
+  - query
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"research_papers","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: species_occurrences
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - query
+  - near
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"species_occurrences","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: public_holidays
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - country
+  - year
+  - subdiv
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"public_holidays","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: wikidata_facts
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - entity
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"wikidata_facts","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: health_surveillance
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - topic
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"health_surveillance","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: clinical_trials
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - condition
+  - query
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"clinical_trials","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: uk_water
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"uk_water","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: global_indicator
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - indicator
+  - country
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"global_indicator","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+- tool: pollen_forecast
+  category: feed
+  rest:
+  - v1_batch_v1_batch_post
+  - v1_pro_tool_v1_pro_tool__tool__post
+  binding: batch-dispatch
+  confidence: high
+  input_schema_keys:
+  - location
+  - lat
+  - lon
+  note: No dedicated REST route in the OpenAPI; callable by name through POST /v1/batch {"calls":[{"tool":"pollen_forecast","args":{}}]}
+    and the paid POST /v1/pro/tool/{tool}. The MCP inputSchema is the only published parameter contract for this
+    tool.
+mcp_only: []
+mcp_only_note: Every MCP tool is reachable over REST through POST /v1/batch, so there are no MCP-only tools; the
+  list above records which ones ALSO have a dedicated route.
+a2a_skills:
+- skill: live-weather
+  tools:
+  - current_weather
+  - weather_forecast
+  - air_quality
+  note: Skill description names the MCP tools it groups.
+- skill: natural-hazards
+  tools:
+  - earthquakes
+  - wildfires
+  - hurricanes
+  - flood_forecast
+  - volcanoes
+  - global_disasters
+  note: Skill description names the MCP tools it groups.
+- skill: macro-economics
+  tools:
+  - us_economy
+  - au_economy
+  - global_macro
+  - treasury_yields
+  - interest_rates
+  note: Skill description names the MCP tools it groups.
+- skill: security-intel
+  tools:
+  - check_vulnerability
+  - exploited_vulnerabilities
+  - security_advisories
+  - software_version
+  note: Skill description names the MCP tools it groups.
+- skill: compliance-screening
+  tools:
+  - sanctions_screen
+  - gov_contracts
+  - federal_register
+  - product_recalls
+  - fda_recalls
+  note: Skill description names the MCP tools it groups.
+- skill: space-orbital
+  tools:
+  - satellite_position
+  - space_weather
+  - rocket_launches
+  - satellites
+  note: Skill description names the MCP tools it groups.
+- skill: verifiable-facts
+  tools: []
+  note: Skill description names the MCP tools it groups.
+- skill: robot-awareness
+  tools:
+  - awareness
+  note: Skill description names the MCP tools it groups.
+rest_only:
+- agent_stats_v1_agent_stats_get
+- benchmarks_history_benchmarks_history_get
+- billing_success_billing_success_get
+- billing_webhook_billing_webhook_post
+- checkout_billing_checkout_post
+- consensus_consensus_get
+- dataset_advisories_dataset_advisories_json_get
+- dataset_consensus_dataset_consensus_json_get
+- dataset_index_dataset_get
+- dataset_models_dataset_models_json_get
+- dataset_news_dataset_news_json_get
+- dataset_servers_dataset_servers_json_get
+- dataset_status_dataset_status_json_get
+- dataset_versions_dataset_versions_json_get
+- health_health_get
+- history_v1_history_get
+- home__get
+- info_info_get
+- iss_iss_get
+- movers_movers_get
+- news_news_get
+- schemas_index_schemas_index_json_get
+- servers_servers_get
+- signals_signals_get
+- signup_signup_post
+- v1_agent_receipt_v1_agent_receipt_post
+- v1_anchor_daily_v1_anchor_daily_get
+- v1_anchor_upgrade_v1_anchor_upgrade_post
+- v1_anchor_v1_anchor_post
+- v1_answer_v1_answer_get
+- v1_asof_v1_asof_get
+- v1_attest_v1_attest_get
+- v1_awareness_v1_awareness_post
+- v1_benchmark_history_v1_benchmark_history_get
+- v1_benchmark_v1_benchmark_get
+- v1_bundle_v1_bundles__bundle_id__get
+- v1_bundles_v1_bundles_get
+- v1_bushfire_v1_bushfire_get
+- v1_checkpoint_proof_v1_checkpoints__day__proof_get
+- v1_checkpoints_v1_checkpoints_get
+- v1_discover_get_v1_discover_get
+- v1_discover_post_v1_discover_post
+- v1_eval_receipt_sample_v1_eval_receipt_sample_get
+- v1_eval_receipt_v1_eval_receipt_post
+- v1_evidence_wildfire_v1_evidence_wildfire_get
+- v1_explain_v1_explain_get
+- v1_exposure_report_v1_exposure_report_get
+- v1_facts_v1_facts_get
+- v1_guard_v1_guard_post
+- v1_humanoid_v1_humanoid_post
+- v1_index_v1_get
+- v1_inference_receipt_sample_v1_inference_receipt_sample_get
+- v1_inference_receipt_v1_inference_receipt_post
+- v1_marine_v1_marine_post
+- v1_me_v1_me_get
+- v1_nearby_v1_nearby_get
+- v1_notarize_v1_notarize_post
+- v1_notary_entry_v1_notary_log__idx__get
+- v1_notary_feed_register_v1_notary_feeds_post
+- v1_notary_feeds_list_v1_notary_feeds_get
+- v1_notary_head_v1_notary_log_head_get
+- v1_notary_log_v1_notary_log_get
+- v1_notary_proof_v1_notary_log__idx__proof_get
+- v1_openweather_current_v1_openweather_current_get
+- v1_openweather_forecast_v1_openweather_forecast_get
+- v1_preflight_v1_preflight_post
+- v1_pro_asof_v1_pro_asof_post
+- v1_pro_batch_v1_pro_batch_post
+- v1_pro_catalog_v1_pro_catalog_get
+- v1_pro_tool_discover_v1_pro_tool__tool__get
+- v1_proxy_witness_v1_proxy_witness_post
+- v1_receipt_v1_receipt_post
+- v1_road_v1_road_post
+- v1_robot_receipt_sample_v1_robot_receipt_sample_get
+- v1_robot_receipt_v1_robot_receipt_post
+- v1_snapshot_v1_snapshot_get
+- v1_sources_v1_sources_get
+- v1_stamp_v1_stamp_post
+- v1_state_of_mcp_trend_v1_state_of_mcp_trend_get
+- v1_state_of_mcp_v1_state_of_mcp_get
+- v1_station_get_v1_station__station_id__get
+- v1_station_reading_v1_station_reading_post
+- v1_station_register_v1_station_register_post
+- v1_stream_v1_stream_get
+- v1_trigger_receipt_v1_trigger_receipt_get
+- v1_vc_v1_vc_post
+- v1_watchlist_delete_v1_watchlist_delete
+- v1_watchlist_get_v1_watchlist_get
+- v1_watchlist_post_v1_watchlist_post
+- v1_webhooks_create_v1_webhooks_post
+- v1_webhooks_delete_v1_webhooks_delete
+- v1_webhooks_list_v1_webhooks_get
+- v1_webhooks_test_v1_webhooks_test_post
+- v1_witness_inclusion_v1_witness__idx__inclusion_get
+- v1_witness_sample_v1_witness_sample_get
+- v1_witness_v1_witness_post
+rest_only_note: 'Operations with no MCP tool: the agent/robot v1 surface (awareness, preflight, road, humanoid,
+  marine verdicts; receipts, witness, notary log, checkpoints, anchoring; watchlist, webhooks, SSE stream; signup/me;
+  x402 pro endpoints; billing) and the open-dataset JSON snapshots. These are REST-first by design — writes and
+  per-user state are deliberately kept off the keyless MCP surface.'

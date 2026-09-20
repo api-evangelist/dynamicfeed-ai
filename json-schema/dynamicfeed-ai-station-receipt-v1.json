@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dynamicfeed.ai/schemas/station-receipt-v1.json",
+  "title": "DF-VERIFY/1 \u2014 station-receipt/v1 profile (We Sign Your Station)",
+  "description": "A signed, tamper-evident record that a registered station REPORTED a reading at a moment, produced by POST /v1/station/reading. HONEST PROVENANCE: Dynamic Feed did NOT measure the value, the station operator did; the receipt states this in words (observation.measured_by and observation.source). SCOPE: attests what the station reported, NOT that the sensor is calibrated and NOT that the value is accurate; corroborate with an independent source where one exists. Detached Ed25519 signature over the object minus its `signature`, json-sorted-compact; independently time-stampable by an independent RFC 3161 authority via /v1/anchor. Advisory evidence, not a certification, never the money path.",
+  "type": "object",
+  "required": [
+    "schema",
+    "issuer",
+    "witnessed_at",
+    "station",
+    "observation",
+    "signature"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema": {
+      "const": "station-receipt/v1"
+    },
+    "issuer": {
+      "type": "string"
+    },
+    "witnessed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "when Dynamic Feed witnessed the station's report"
+    },
+    "station": {
+      "type": "object",
+      "required": [
+        "station_id"
+      ],
+      "properties": {
+        "station_id": {
+          "type": "string",
+          "pattern": "^stn_[0-9a-f]{16}$"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "location": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "required": [
+        "quantity",
+        "value",
+        "source",
+        "measured_by"
+      ],
+      "properties": {
+        "quantity": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        },
+        "unit": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "description": "when the station reports it measured the value"
+        },
+        "source": {
+          "const": "station-reported"
+        },
+        "measured_by": {
+          "type": "string",
+          "description": "states the station operator measured it, not Dynamic Feed"
+        },
+        "source_count": {
+          "type": "integer",
+          "description": "number of independent sources (1 when only the station reported)"
+        },
+        "single_source": {
+          "type": "boolean",
+          "description": "true unless an independent Dynamic Feed feed corroborated the quantity at the station's location"
+        }
+      }
+    },
+    "provenance": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "station -> owner -> witnessed:dynamicfeed.ai"
+    },
+    "note": {
+      "type": "string"
+    },
+    "signature": {
+      "type": "object",
+      "required": [
+        "alg",
+        "key_id",
+        "sig"
+      ],
+      "properties": {
+        "alg": {
+          "const": "Ed25519"
+        },
+        "key_id": {
+          "type": "string"
+        },
+        "sig": {
+          "type": "string"
+        }
+      }
+    },
+    "concordance": {
+      "type": "object",
+      "description": "present when Dynamic Feed's own independent feed for the quantity at the station's location could cross-check the report; carries an honest agree/diverge/single_source/degraded verdict (concordance/v1). The station and Dynamic Feed are distinct provenance roots."
+    }
+  }
+}
