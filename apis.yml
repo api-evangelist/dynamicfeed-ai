@@ -153,6 +153,11 @@ apis:
   - Webhook
   - Server-Sent Events
   - Live Data
+  - Notification
+  tags_raw:
+  - Webhook
+  - Server-Sent Events
+  - Live Data
   - Notifications
   properties:
   - type: Webhooks
