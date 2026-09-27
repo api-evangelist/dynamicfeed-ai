@@ -1,0 +1,162 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Models API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Models across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Models
+paths:
+  /models:
+    get:
+      summary: Models
+      description: Search current AI models by price, context, capability. Cheapest first. (Requires API key.)
+      operationId: models_models_get
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: match model name/id
+          title: Q
+        description: match model name/id
+      - name: provider
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: openai, anthropic, google, ...
+          title: Provider
+        description: openai, anthropic, google, ...
+      - name: max_input_price
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: max USD per 1M input tokens
+          title: Max Input Price
+        description: max USD per 1M input tokens
+      - name: min_context
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: min context window in tokens
+          title: Min Context
+        description: min context window in tokens
+      - name: needs_vision
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: only models that accept images
+          title: Needs Vision
+        description: only models that accept images
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          default: 50
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Models
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

@@ -1,0 +1,255 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Weather API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Weather across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Weather
+paths:
+  /weather:
+    get:
+      summary: Weather
+      description: 'Current weather anywhere — by city name (geocoded) or lat/lon. Temperature, feels-like,
+
+        wind, humidity, precipitation & conditions, live from Open-Meteo. (Requires API key.)'
+      operationId: weather_weather_get
+      parameters:
+      - name: city
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: city name, e.g. London, Tokyo, New York
+          title: City
+        description: city name, e.g. London, Tokyo, New York
+      - name: lat
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: latitude (alternative to city)
+          title: Lat
+        description: latitude (alternative to city)
+      - name: lon
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: longitude (alternative to city)
+          title: Lon
+        description: longitude (alternative to city)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Weather
+    servers:
+    - url: https://dynamicfeed.ai
+  /v1/openweather/current:
+    get:
+      tags:
+      - Weather
+      summary: V1 Openweather Current
+      description: 'LEGACY ALIAS — provider is Open-Meteo. Returns the canonical current_weather envelope
+
+        (app/open_meteo.py: CC-BY 4.0, attribution, freshness, cross-source concordance) plus a
+
+        provider-identity notice. Prefer the current_weather tool via POST /v1/batch or MCP.'
+      operationId: v1_openweather_current_v1_openweather_current_get
+      parameters:
+      - name: city
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 80
+          - type: 'null'
+          title: City
+      - name: lat
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            maximum: 90
+            minimum: -90
+          - type: 'null'
+          title: Lat
+      - name: lon
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            maximum: 180
+            minimum: -180
+          - type: 'null'
+          title: Lon
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://dynamicfeed.ai
+  /v1/openweather/forecast:
+    get:
+      tags:
+      - Weather
+      summary: V1 Openweather Forecast
+      description: 'LEGACY ALIAS — provider is Open-Meteo. Returns the canonical multi-model forecast envelope
+
+        (app/open_meteo.py) plus a provider-identity notice. Prefer weather_forecast via POST /v1/batch
+
+        or MCP.'
+      operationId: v1_openweather_forecast_v1_openweather_forecast_get
+      parameters:
+      - name: city
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 80
+          - type: 'null'
+          title: City
+      - name: lat
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            maximum: 90
+            minimum: -90
+          - type: 'null'
+          title: Lat
+      - name: lon
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+            maximum: 180
+            minimum: -180
+          - type: 'null'
+          title: Lon
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 16
+          minimum: 1
+          default: 5
+          title: Days
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

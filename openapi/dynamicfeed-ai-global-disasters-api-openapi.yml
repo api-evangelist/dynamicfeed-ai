@@ -1,0 +1,156 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Global Disasters API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Global Disasters across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Global Disasters
+paths:
+  /global-disasters:
+    get:
+      summary: Global Disasters Ep
+      description: 'Worldwide multi-hazard disaster alerts (GDACS) — earthquakes, tropical cyclones, floods,
+
+        droughts, volcanoes — with a Green/Orange/Red humanitarian-impact level + affected countries.
+
+        The ''how bad, where, who''s affected'' severity layer. (Requires API key.)'
+      operationId: global_disasters_ep_global_disasters_get
+      parameters:
+      - name: alert_level
+        in: query
+        required: false
+        schema:
+          type: string
+          description: Green;Orange;Red (semicolon-separated)
+          default: Orange;Red
+          title: Alert Level
+        description: Green;Orange;Red (semicolon-separated)
+      - name: event_type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: EQ | TC | FL | DR | VO | WF
+          title: Event Type
+        description: EQ | TC | FL | DR | VO | WF
+      - name: country
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: country name or ISO3 (e.g. PHL)
+          title: Country
+        description: country name or ISO3 (e.g. PHL)
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 90
+          minimum: 1
+          description: look-back window in days
+          default: 7
+          title: Days
+        description: look-back window in days
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 50
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Global Disasters
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

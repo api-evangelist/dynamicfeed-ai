@@ -1,0 +1,166 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Versions API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Versions across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Versions
+paths:
+  /versions:
+    get:
+      summary: Versions
+      description: 'Latest stable versions & end-of-life dates for languages, runtimes, frameworks,
+
+        databases & OSes. Answers ''what''s the latest X?'' and ''is version Y still supported?''.
+
+        Each row has a `status` (supported/nearing-eol/end-of-life) + provenance. (Requires API key.)'
+      operationId: versions_versions_get
+      parameters:
+      - name: product
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: exact product, e.g. python, nodejs, postgresql
+          title: Product
+        description: exact product, e.g. python, nodejs, postgresql
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: match a product name
+          title: Q
+        description: match a product name
+      - name: category
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: language | runtime | framework | database | os | tool
+          title: Category
+        description: language | runtime | framework | database | os | tool
+      - name: only_supported
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: exclude end-of-life release lines
+          title: Only Supported
+        description: exclude end-of-life release lines
+      - name: only_lts
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          description: only long-term-support lines
+          title: Only Lts
+        description: only long-term-support lines
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 300
+          default: 100
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Versions
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

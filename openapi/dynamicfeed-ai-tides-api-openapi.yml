@@ -1,0 +1,141 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Tides API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Tides across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Tides
+paths:
+  /tides:
+    get:
+      summary: Tides Ep
+      description: 'Current water level + next high/low tides for a US coastal station (NOAA CO-OPS, public domain).
+
+        SCOPE: US stations only. Not for navigation — confirm against official NOAA tide tables. (Requires API key.)'
+      operationId: tides_ep_tides_get
+      parameters:
+      - name: station
+        in: query
+        required: false
+        schema:
+          type: string
+          description: NOAA station id, e.g. 9414290
+          default: ''
+          title: Station
+        description: NOAA station id, e.g. 9414290
+      - name: location
+        in: query
+        required: false
+        schema:
+          type: string
+          description: 'or a preset: san francisco, new york, boston, seattle, honolulu, …'
+          default: ''
+          title: Location
+        description: 'or a preset: san francisco, new york, boston, seattle, honolulu, …'
+      - name: units
+        in: query
+        required: false
+        schema:
+          type: string
+          description: english (feet) | metric
+          default: english
+          title: Units
+        description: english (feet) | metric
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 20
+          default: 6
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Tides
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

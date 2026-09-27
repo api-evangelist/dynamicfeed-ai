@@ -1,0 +1,257 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Dev API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged dev across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Dev
+paths:
+  /github-releases:
+    get:
+      tags:
+      - Dev
+      summary: Github Releases Ep
+      description: 'Latest GitHub releases for a repo (version, date, author, link) via the public atom feed —
+
+        keyless source, no rate limit. (Requires API key on REST; the MCP tool is keyless.)'
+      operationId: github_releases_ep_github_releases_get
+      parameters:
+      - name: repo
+        in: query
+        required: true
+        schema:
+          type: string
+          description: owner/name, e.g. openai/openai-python
+          title: Repo
+        description: owner/name, e.g. openai/openai-python
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: max releases (1-25)
+          default: 5
+          title: Limit
+        description: max releases (1-25)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://dynamicfeed.ai
+  /hacker-news:
+    get:
+      tags:
+      - Dev
+      summary: Hacker News Ep
+      description: Live Hacker News stories — the tech/AI attention layer. Optional case-insensitive title filter. (Requires API key.)
+      operationId: hacker_news_ep_hacker_news_get
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Query
+      - name: kind
+        in: query
+        required: false
+        schema:
+          type: string
+          description: top | new | best
+          default: top
+          title: Kind
+        description: top | new | best
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          description: max stories (1-30)
+          default: 10
+          title: Limit
+        description: max stories (1-30)
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://dynamicfeed.ai
+  /dns:
+    get:
+      tags:
+      - Dev
+      summary: Dns Ep
+      description: Live DNS records for a domain via Cloudflare DNS-over-HTTPS. (Requires API key.)
+      operationId: dns_ep_dns_get
+      parameters:
+      - name: name
+        in: query
+        required: true
+        schema:
+          type: string
+          description: domain, e.g. example.com
+          title: Name
+        description: domain, e.g. example.com
+      - name: type
+        in: query
+        required: false
+        schema:
+          type: string
+          description: A | AAAA | MX | TXT | NS | CNAME | SOA | CAA
+          default: A
+          title: Type
+        description: A | AAAA | MX | TXT | NS | CNAME | SOA | CAA
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

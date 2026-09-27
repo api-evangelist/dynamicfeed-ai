@@ -1,0 +1,37 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Dynamic Feed — Live Data For AI API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Dynamic Feed — Live Data For AI across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Dynamic Feed — Live Data For AI
+paths:
+  /:
+    get:
+      summary: Home
+      description: Serve the marketing landing page (with live demo widget).
+      operationId: home__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/html:
+              schema:
+                type: string
+      tags:
+      - Dynamic Feed — Live Data For AI
+    servers:
+    - url: https://dynamicfeed.ai
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

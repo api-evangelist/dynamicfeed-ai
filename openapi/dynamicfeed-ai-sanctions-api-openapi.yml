@@ -1,0 +1,136 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Sanctions API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Sanctions across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Sanctions
+paths:
+  /sanctions:
+    get:
+      summary: Sanctions Screen
+      description: 'Screen a name against the US OFAC SDN + UK Sanctions List (FCDO, Open Government Licence) — each match
+
+        tagged with its list (US-OFAC | UK). A match means the party is sanctioned — legally binding the instant
+
+        it''s posted; models can''t know recent designations. Confirm the full official entry before acting.
+
+        (Requires API key.)'
+      operationId: sanctions_screen_sanctions_get
+      parameters:
+      - name: name
+        in: query
+        required: false
+        schema:
+          type: string
+          description: name to screen against the US OFAC SDN + UK Sanctions List
+          default: ''
+          title: Name
+        description: name to screen against the US OFAC SDN + UK Sanctions List
+      - name: program
+        in: query
+        required: false
+        schema:
+          type: string
+          description: optional program/regime filter, e.g. IRAN, CUBA, or a UK regime
+          default: ''
+          title: Program
+        description: optional program/regime filter, e.g. IRAN, CUBA, or a UK regime
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 25
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Sanctions
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

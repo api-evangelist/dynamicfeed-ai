@@ -1,0 +1,150 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Billing API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Billing across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Billing
+paths:
+  /billing/checkout:
+    post:
+      summary: Checkout
+      description: Start a Stripe Checkout for a paid plan. Returns a payment URL.
+      operationId: checkout_billing_checkout_post
+      parameters:
+      - name: api_key
+        in: query
+        required: true
+        schema:
+          type: string
+          description: the key you want to upgrade
+          title: Api Key
+        description: the key you want to upgrade
+      - name: tier
+        in: query
+        required: false
+        schema:
+          type: string
+          description: pro ($19/mo), ultra ($59/mo), mega ($199/mo) or notary ($49/mo)
+          default: pro
+          title: Tier
+        description: pro ($19/mo), ultra ($59/mo), mega ($199/mo) or notary ($49/mo)
+      - name: interval
+        in: query
+        required: false
+        schema:
+          type: string
+          description: '''month'' (default) or ''annual'' — annual prepay is 2 months free ($190/$590/$1,990/$490 per year)'
+          default: month
+          title: Interval
+        description: '''month'' (default) or ''annual'' — annual prepay is 2 months free ($190/$590/$1,990/$490 per year)'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Billing
+    servers:
+    - url: https://dynamicfeed.ai
+  /billing/success:
+    get:
+      summary: Billing Success
+      operationId: billing_success_billing_success_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Billing
+    servers:
+    - url: https://dynamicfeed.ai
+  /billing/webhook:
+    post:
+      summary: Billing Webhook
+      description: Stripe calls this to confirm payments. Upgrades/downgrades the key.
+      operationId: billing_webhook_billing_webhook_post
+      parameters:
+      - name: stripe-signature
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Stripe-Signature
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Billing
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

@@ -1,0 +1,185 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Benchmarks API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Benchmarks across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Benchmarks
+paths:
+  /benchmarks:
+    get:
+      summary: Benchmarks
+      description: Measured latency & uptime per AI provider — our own data, fastest first. (Requires API key.)
+      operationId: benchmarks_benchmarks_get
+      parameters:
+      - name: window_hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 720
+          minimum: 1
+          description: rolling window in hours
+          default: 24
+          title: Window Hours
+        description: rolling window in hours
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Benchmarks
+    servers:
+    - url: https://dynamicfeed.ai
+  /benchmarks/history:
+    get:
+      summary: Benchmarks History
+      description: 'The PERMANENT daily provider-latency & uptime archive — data Dynamic Feed measures itself and
+
+        never prunes, so it cannot be backfilled by anyone. Built for quant / eval / research use. Free keys
+
+        get a 7-day sample; paid plans get the full history. (Requires API key.)'
+      operationId: benchmarks_history_benchmarks_history_get
+      parameters:
+      - name: provider
+        in: query
+        required: false
+        schema:
+          type: string
+          description: filter to one provider, e.g. openai (optional)
+          default: ''
+          title: Provider
+        description: filter to one provider, e.g. openai (optional)
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 1825
+          minimum: 1
+          description: lookback in days
+          default: 90
+          title: Days
+        description: lookback in days
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Benchmarks
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

@@ -1,0 +1,139 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Dataset API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Dataset across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Dataset
+paths:
+  /dataset:
+    get:
+      summary: Dataset Index
+      description: 'Open, free, crawlable snapshots of every feed (for AI training & research).
+
+
+        The real-time, filterable API + MCP endpoint remain the product; this is a
+
+        public snapshot so the data spreads into the corpus AIs learn from.'
+      operationId: dataset_index_dataset_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/models.json:
+    get:
+      summary: Dataset Models
+      operationId: dataset_models_dataset_models_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/servers.json:
+    get:
+      summary: Dataset Servers
+      operationId: dataset_servers_dataset_servers_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/status.json:
+    get:
+      summary: Dataset Status
+      operationId: dataset_status_dataset_status_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/news.json:
+    get:
+      summary: Dataset News
+      operationId: dataset_news_dataset_news_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/consensus.json:
+    get:
+      summary: Dataset Consensus
+      operationId: dataset_consensus_dataset_consensus_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/versions.json:
+    get:
+      summary: Dataset Versions
+      operationId: dataset_versions_dataset_versions_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+  /dataset/advisories.json:
+    get:
+      summary: Dataset Advisories
+      operationId: dataset_advisories_dataset_advisories_json_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      tags:
+      - Dataset
+    servers:
+    - url: https://dynamicfeed.ai
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

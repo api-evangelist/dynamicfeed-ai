@@ -1,0 +1,150 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Federal Register API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Federal Register across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Federal Register
+paths:
+  /federal-register:
+    get:
+      summary: Federal Register
+      description: 'Recent US Federal Register documents — rules, proposed rules, notices, executive orders (keyless
+
+        NARA source). Answers what regulation took effect or what the President signed. (Requires API key.)'
+      operationId: federal_register_federal_register_get
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+          description: text search
+          default: ''
+          title: Query
+        description: text search
+      - name: doc_type
+        in: query
+        required: false
+        schema:
+          type: string
+          description: RULE | PRORULE | NOTICE | PRESDOCU
+          default: ''
+          title: Doc Type
+        description: RULE | PRORULE | NOTICE | PRESDOCU
+      - name: agency
+        in: query
+        required: false
+        schema:
+          type: string
+          description: agency slug, e.g. securities-and-exchange-commission
+          default: ''
+          title: Agency
+        description: agency slug, e.g. securities-and-exchange-commission
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 90
+          minimum: 1
+          default: 7
+          title: Days
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          default: 20
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Federal Register
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml

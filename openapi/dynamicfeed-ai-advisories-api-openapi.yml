@@ -1,0 +1,246 @@
+openapi: 3.2.0
+info:
+  title: Dynamicfeed Ai Advisories API
+  version: 1.0.0
+  contact:
+    name: Dynamic Feed
+    url: https://dynamicfeed.ai/
+  x-refined-note:
+  - x-generated differs across the merged source definitions and was not carried
+  - x-method differs across the merged source definitions and was not carried
+  - x-original differs across the merged source definitions and was not carried
+  - x-source differs across the merged source definitions and was not carried
+  description: 'Operations tagged Advisories across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://dynamicfeed.ai
+tags:
+- name: Advisories
+paths:
+  /advisories:
+    get:
+      summary: Advisories
+      description: 'Recent security advisories / CVEs — affected package, vulnerable version range, patched
+
+        version, severity & CVSS. Filter by package/ecosystem/severity. Newest first. Pairs with
+
+        /versions: is my stack current AND safe? (Requires API key.)'
+      operationId: advisories_advisories_get
+      parameters:
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: match summary / package / CVE / GHSA id
+          title: Q
+        description: match summary / package / CVE / GHSA id
+      - name: package
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: affected package name, e.g. lodash, requests
+          title: Package
+        description: affected package name, e.g. lodash, requests
+      - name: ecosystem
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: npm | pip | maven | go | rubygems | nuget | composer | ...
+          title: Ecosystem
+        description: npm | pip | maven | go | rubygems | nuget | composer | ...
+      - name: severity
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: low | moderate | high | critical
+          title: Severity
+        description: low | moderate | high | critical
+      - name: min_cvss
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: number
+          - type: 'null'
+          description: minimum CVSS score (0-10)
+          title: Min Cvss
+        description: minimum CVSS score (0-10)
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 200
+          default: 50
+          title: Limit
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Advisories
+    servers:
+    - url: https://dynamicfeed.ai
+  /advisories/check:
+    get:
+      summary: Advisories Check
+      description: 'Is this exact package@version vulnerable? FULL historical lookup across the entire OSV.dev
+
+        corpus (Google) — returns every matching advisory + the versions that fix it. For Maven, pass the
+
+        full ''group:artifact'' coordinate; a bare artifact name returns a hint, not a misleading
+
+        ''not vulnerable''. (Requires API key.)'
+      operationId: advisories_check_advisories_check_get
+      parameters:
+      - name: package
+        in: query
+        required: true
+        schema:
+          type: string
+          description: package name, e.g. lodash, requests. Maven needs the full 'group:artifact' coordinate, e.g. org.apache.logging.log4j:log4j-core
+          title: Package
+        description: package name, e.g. lodash, requests. Maven needs the full 'group:artifact' coordinate, e.g. org.apache.logging.log4j:log4j-core
+      - name: version
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: exact version, e.g. 4.17.10
+          title: Version
+        description: exact version, e.g. 4.17.10
+      - name: ecosystem
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: npm | pip | maven | go | rubygems | nuget | cargo | composer
+          title: Ecosystem
+        description: npm | pip | maven | go | rubygems | nuget | cargo | composer
+      - name: x-api-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Api-Key
+      - name: x-rapidapi-proxy-secret
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-Proxy-Secret
+      - name: x-rapidapi-user
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Rapidapi-User
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      tags:
+      - Advisories
+    servers:
+    - url: https://dynamicfeed.ai
+components:
+  schemas:
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+x-refined-from:
+- dynamicfeed-ai-openapi.json
+- dynamicfeed-ai-openapi.yml
