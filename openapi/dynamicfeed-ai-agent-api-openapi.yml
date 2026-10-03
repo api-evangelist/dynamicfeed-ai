@@ -1,16 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Dynamicfeed Ai Agent API
-  version: 1.0.0
+  title: Dynamic Feed — Live Data for AI Agent API
+  description: Fresh, current data that AI models lack — 20 live domains, 94 read-only tools, over one REST API or a keyless MCP endpoint.
   contact:
     name: Dynamic Feed
     url: https://dynamicfeed.ai/
-  x-refined-note:
-  - x-generated differs across the merged source definitions and was not carried
-  - x-method differs across the merged source definitions and was not carried
-  - x-original differs across the merged source definitions and was not carried
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged agent across 3 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-agent-public-openapi.yml, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: 1.0.0
 servers:
 - url: https://dynamicfeed.ai
 tags:
@@ -82,8 +77,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /schemas/index.json:
     get:
       tags:
@@ -105,8 +98,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/bundles:
     get:
       tags:
@@ -122,8 +113,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/bundles/{bundle_id}:
     get:
       tags:
@@ -150,8 +139,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/batch:
     post:
       tags:
@@ -182,8 +169,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/pro/tool/{tool}:
     post:
       tags:
@@ -245,8 +230,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/pro/asof:
     post:
       tags:
@@ -272,8 +255,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/pro/batch:
     post:
       tags:
@@ -295,8 +276,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/pro/catalog:
     get:
       tags:
@@ -316,8 +295,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/drift:
     post:
       tags:
@@ -335,8 +312,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/guard:
     post:
       tags:
@@ -364,8 +339,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/sources:
     get:
       tags:
@@ -385,8 +358,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/explain:
     get:
       tags:
@@ -454,8 +425,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       x-operation-id-source: normalized
       x-operation-id-original: v1_explain_v1_explain_get
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/snapshot:
     get:
       tags:
@@ -489,8 +458,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/asof:
     get:
       tags:
@@ -567,8 +534,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/watchlist:
     get:
       tags:
@@ -721,8 +686,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/stream:
     get:
       tags:
@@ -777,8 +740,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/webhooks:
     post:
       tags:
@@ -922,8 +883,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/webhooks/test:
     post:
       tags:
@@ -970,8 +929,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1:
     get:
       tags:
@@ -989,8 +946,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/receipt:
     post:
       tags:
@@ -1010,8 +965,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/stamp:
     post:
       tags:
@@ -1051,8 +1004,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/agent/receipt:
     post:
       tags:
@@ -1080,8 +1031,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/notarize:
     post:
       tags:
@@ -1140,8 +1089,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/exposure-report:
     get:
       tags:
@@ -1215,8 +1162,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/evidence/wildfire:
     get:
       tags:
@@ -1294,8 +1239,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/vc:
     post:
       tags:
@@ -1309,8 +1252,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/station/register:
     post:
       tags:
@@ -1363,8 +1304,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/station/reading:
     post:
       tags:
@@ -1415,8 +1354,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/station/{station_id}:
     get:
       tags:
@@ -1445,8 +1382,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/proxy-witness:
     post:
       tags:
@@ -1507,8 +1442,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/witness:
     post:
       tags:
@@ -1575,8 +1508,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/witness/sample:
     get:
       tags:
@@ -1596,8 +1527,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/inference-receipt:
     post:
       tags:
@@ -1660,8 +1589,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/inference-receipt/sample:
     get:
       tags:
@@ -1681,8 +1608,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/eval-receipt:
     post:
       tags:
@@ -1745,8 +1670,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/eval-receipt/sample:
     get:
       tags:
@@ -1766,8 +1689,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/checkpoints:
     get:
       tags:
@@ -1803,8 +1724,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/checkpoints/{day}/proof:
     get:
       tags:
@@ -1848,8 +1767,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/notary/log/head:
     get:
       tags:
@@ -1867,8 +1784,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/notary/log/{idx}:
     get:
       tags:
@@ -1897,8 +1812,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/notary/log:
     get:
       tags:
@@ -1936,8 +1849,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/notary/log/{idx}/proof:
     get:
       tags:
@@ -1970,8 +1881,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/witness/{idx}/inclusion:
     get:
       tags:
@@ -2014,8 +1923,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/notary/feeds:
     post:
       tags:
@@ -2113,8 +2020,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/benchmark:
     get:
       tags:
@@ -2138,8 +2043,6 @@ paths:
           content:
             application/json:
               schema: {}
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/benchmark/history:
     get:
       tags:
@@ -2177,8 +2080,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/nearby:
     get:
       tags:
@@ -2228,8 +2129,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/attest:
     get:
       tags:
@@ -2295,8 +2194,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/trigger-receipt:
     get:
       tags:
@@ -2390,8 +2287,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/intensity:
     get:
       tags:
@@ -2451,8 +2346,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/bushfire:
     get:
       tags:
@@ -2512,8 +2405,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
   /v1/me:
     get:
       tags:
@@ -2560,10 +2451,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-    servers:
-    - url: https://dynamicfeed.ai
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -2590,16 +2488,3 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-x-refined-from:
-- dynamicfeed-ai-openapi.json
-- dynamicfeed-ai-agent-public-openapi.yml
-- dynamicfeed-ai-openapi.yml

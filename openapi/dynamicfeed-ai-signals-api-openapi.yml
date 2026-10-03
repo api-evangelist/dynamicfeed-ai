@@ -1,16 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Dynamicfeed Ai Signals API
-  version: 1.0.0
+  title: Dynamic Feed — Live Data for AI Signals API
+  description: Fresh, current data that AI models lack — 20 live domains, 94 read-only tools, over one REST API or a keyless MCP endpoint.
   contact:
     name: Dynamic Feed
     url: https://dynamicfeed.ai/
-  x-refined-note:
-  - x-generated differs across the merged source definitions and was not carried
-  - x-method differs across the merged source definitions and was not carried
-  - x-original differs across the merged source definitions and was not carried
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Signals across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: 1.0.0
 servers:
 - url: https://dynamicfeed.ai
 tags:
@@ -83,10 +78,17 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       tags:
       - Signals
-    servers:
-    - url: https://dynamicfeed.ai
 components:
   schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
     ValidationError:
       properties:
         loc:
@@ -113,15 +115,3 @@ components:
       - msg
       - type
       title: ValidationError
-    HTTPValidationError:
-      properties:
-        detail:
-          items:
-            $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
-      type: object
-      title: HTTPValidationError
-x-refined-from:
-- dynamicfeed-ai-openapi.json
-- dynamicfeed-ai-openapi.yml

@@ -1,16 +1,11 @@
 openapi: 3.2.0
 info:
-  title: Dynamicfeed Ai Dataset API
-  version: 1.0.0
+  title: Dynamic Feed — Live Data for AI Dataset API
+  description: Fresh, current data that AI models lack — 20 live domains, 94 read-only tools, over one REST API or a keyless MCP endpoint.
   contact:
     name: Dynamic Feed
     url: https://dynamicfeed.ai/
-  x-refined-note:
-  - x-generated differs across the merged source definitions and was not carried
-  - x-method differs across the merged source definitions and was not carried
-  - x-original differs across the merged source definitions and was not carried
-  - x-source differs across the merged source definitions and was not carried
-  description: 'Operations tagged Dataset across 2 of this provider''s published API definitions: dynamicfeed-ai-openapi.json, dynamicfeed-ai-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: 1.0.0
 servers:
 - url: https://dynamicfeed.ai
 tags:
@@ -34,8 +29,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/models.json:
     get:
       summary: Dataset Models
@@ -48,8 +41,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/servers.json:
     get:
       summary: Dataset Servers
@@ -62,8 +53,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/status.json:
     get:
       summary: Dataset Status
@@ -76,8 +65,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/news.json:
     get:
       summary: Dataset News
@@ -90,8 +77,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/consensus.json:
     get:
       summary: Dataset Consensus
@@ -104,8 +89,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/versions.json:
     get:
       summary: Dataset Versions
@@ -118,8 +101,6 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
   /dataset/advisories.json:
     get:
       summary: Dataset Advisories
@@ -132,8 +113,3 @@ paths:
               schema: {}
       tags:
       - Dataset
-    servers:
-    - url: https://dynamicfeed.ai
-x-refined-from:
-- dynamicfeed-ai-openapi.json
-- dynamicfeed-ai-openapi.yml
