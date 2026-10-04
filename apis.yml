@@ -176,6 +176,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Agents
+  tags_raw:
   - agent
   properties:
   - type: OpenAPI
@@ -236,6 +238,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - AI Models
+  tags_raw:
   - Ai Models
   properties:
   - type: OpenAPI
@@ -566,6 +570,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Datasets
+  tags_raw:
   - Dataset
   properties:
   - type: OpenAPI
@@ -596,6 +602,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Dev
+  tags_raw:
   - dev
   properties:
   - type: OpenAPI
@@ -687,7 +695,8 @@ apis:
     data for ai.
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
-  tags:
+  tags: []
+  tags_raw:
   - Dynamic Feed — Live Data For AI
   properties:
   - type: OpenAPI
@@ -1079,6 +1088,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - ISS
+  tags_raw:
   - Iss
   properties:
   - type: OpenAPI
@@ -1439,6 +1450,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Robot
+  tags_raw:
   - robot
   properties:
   - type: OpenAPI
@@ -1529,6 +1542,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Satellite
+  tags_raw:
   - Satellites
   properties:
   - type: OpenAPI
@@ -1559,6 +1574,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - SEC Filings
+  tags_raw:
   - Sec Filings
   properties:
   - type: OpenAPI
@@ -1589,6 +1606,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Security
+  tags_raw:
   - security
   properties:
   - type: OpenAPI
@@ -1709,6 +1728,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - Sign Up
+  tags_raw:
   - Signup
   properties:
   - type: OpenAPI
@@ -2099,6 +2120,8 @@ apis:
   humanURL: https://dynamicfeed.ai/docs
   baseURL: https://dynamicfeed.ai/mcp
   tags:
+  - WhatsNew
+  tags_raw:
   - Whats New
   properties:
   - type: OpenAPI
