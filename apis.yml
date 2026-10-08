@@ -2212,6 +2212,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: RateLimits
+  url: rate-limits/dynamicfeed-ai-rate-limits.yml
 - type: Overlay
   url: overlays/dynamicfeed-ai-openapi-overlay.yaml
 - type: AgentSkill
