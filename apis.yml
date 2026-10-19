@@ -36,7 +36,6 @@ tags:
 - Space
 - Robotics
 - x402
-- Receipts
 - Notary
 - Australia
 tags_raw:
@@ -53,7 +52,6 @@ tags_raw:
 - Space
 - Robotics
 - x402
-- Receipts
 - Notary
 - Australia
 apis:
@@ -2312,3 +2310,5 @@ x-a2a:
   grade: "conformant"
   protocol_version: "1.0"
   control: 404
+x-tags-removed:
+- Receipts
