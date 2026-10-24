@@ -39,6 +39,12 @@ artifacts:
   front-door-ai/2026-09-17.yml:
     method: unknown
     evidence: no authorship recorded
+  integrations/_index.yml:
+    method: generated
+    evidence: carries an API Evangelist house phrase
+  integrations/dynamicfeed-ai-integration-edges.yml:
+    method: unknown
+    evidence: no authorship recorded
   json-schema/dynamicfeed-ai-attestation-v1.json:
     method: unknown
     evidence: no authorship recorded
@@ -87,7 +93,7 @@ artifacts:
   json-schema/dynamicfeed-ai-txn-receipt-v1.json:
     method: unknown
     evidence: no authorship recorded
-  kin/checks-2026-09-24T161608.yml:
+  kin/checks-2026-10-11T110117.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
   kin/score-2026-09-19T193153.yml:
@@ -120,6 +126,21 @@ artifacts:
   kin/score-2026-09-24T161608.yml:
     method: generated
     evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-25T210408.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-09-25T232841.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-10-03T000835.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-10-03T024842.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
+  kin/score-2026-10-11T110117.yml:
+    method: generated
+    evidence: Kin Score snapshot written by score.rb
   lifecycle/dynamicfeed-ai-lifecycle.yml:
     method: searched
     evidence: declared in the artifact
@@ -139,17 +160,425 @@ artifacts:
     method: harvested
     evidence: found in openapi/_original/; the fetch URL and bytes were not recorded, so byte-identity
       to the provider's source is unverified
+  openapi/_original/dynamicfeed-ai-agent-public-openapi.yml:
+    method: searched
+    evidence: declared in the artifact
   openapi/_original/dynamicfeed-ai-openapi.json:
     method: harvested
     evidence: found in openapi/_original/; the fetch URL and bytes were not recorded, so byte-identity
       to the provider's source is unverified
-  openapi/dynamicfeed-ai-agent-public-openapi.yml:
+  openapi/_original/dynamicfeed-ai-openapi.yml:
     method: searched
     evidence: declared in the artifact
-  openapi/dynamicfeed-ai-openapi.yml:
-    method: searched
+  openapi/dynamicfeed-ai-advisories-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-agent-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-agent-stats-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-ai-models-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-air-quality-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-airport-delays-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-benchmarks-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-billing-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-carbon-intensity-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-china-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-cite-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-consensus-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-convert-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-countdown-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-dataset-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-dev-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-drought-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-drug-shortages-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-dynamic-feed-live-data-for-ai-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-earthquakes-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-energy-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-exploited-vulnerabilities-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-federal-register-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-flights-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-forecast-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-global-disasters-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-gps-interference-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-health-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-history-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-info-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-internet-outages-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-iss-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-launches-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-macro-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-market-hours-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-models-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-movers-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-natural-events-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-news-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-orbital-datacenters-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-rates-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-reality-check-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-recalls-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-robot-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-sanctions-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-satellite-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-satellites-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-sec-filings-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-security-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-servers-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-shipping-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-signals-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-signup-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-space-weather-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-sports-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-status-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-tides-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-time-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-treasury-yields-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-verified-facts-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-versions-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-volcanoes-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-water-levels-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-weather-alerts-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-weather-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-whats-new-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-wildfires-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  openapi/dynamicfeed-ai-world-pulse-api-openapi.yml:
+    method: derived
+    evidence: paths are a subset of openapi/_original/ (split from the harvested spec)
+  overlays/dynamicfeed-ai-advisories-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-agent-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-agent-stats-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-ai-models-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-air-quality-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-airport-delays-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-benchmarks-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-billing-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-carbon-intensity-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-china-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-cite-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-consensus-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-convert-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-countdown-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-dataset-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-dev-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-drought-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-drug-shortages-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-dynamic-feed-live-data-for-ai-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-earthquakes-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-energy-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-exploited-vulnerabilities-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-federal-register-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-flights-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-forecast-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-global-disasters-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-gps-interference-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-health-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-history-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-info-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-internet-outages-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-iss-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-launches-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-macro-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-market-hours-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-models-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-movers-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-natural-events-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-news-api-phrasing-overlay.yaml:
+    method: generated
     evidence: declared in the artifact
   overlays/dynamicfeed-ai-openapi-overlay.yaml:
+    method: derived
+    evidence: an API Evangelist overlay (title) over the provider's contract
+  overlays/dynamicfeed-ai-orbital-datacenters-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-rates-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-reality-check-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-recalls-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-robot-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-sanctions-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-satellite-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-satellites-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-sec-filings-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-security-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-servers-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-shipping-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-signals-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-signup-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-space-weather-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-sports-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-status-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-tides-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-time-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-treasury-yields-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-verified-facts-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-versions-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-volcanoes-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-water-levels-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-weather-alerts-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-weather-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-whats-new-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-wildfires-api-phrasing-overlay.yaml:
+    method: generated
+    evidence: declared in the artifact
+  overlays/dynamicfeed-ai-world-pulse-api-phrasing-overlay.yaml:
     method: generated
     evidence: declared in the artifact
   packages/dynamicfeed-ai-packages.yml:
